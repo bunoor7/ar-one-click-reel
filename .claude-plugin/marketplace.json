@@ -1,0 +1,11 @@
+{
+  "name": "ar-one-click-reel",
+  "owner": { "name": "Bu Nasser" },
+  "plugins": [
+    {
+      "name": "ar-one-click-reel",
+      "source": "./",
+      "description": "AR One Click Reel (سينما الورق): إنتاج فيديو عربي سينمائي بتقنية الورق المقصوص والستوب موشن."
+    }
+  ]
+}
