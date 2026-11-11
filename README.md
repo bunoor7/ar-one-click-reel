@@ -44,7 +44,7 @@
 </div>
 
 ```bash
-/plugin marketplace add YOUR_GITHUB_USERNAME/ar-one-click-reel
+/plugin marketplace add GitHub/ar-one-click-reel
 ```
 
 ```bash
