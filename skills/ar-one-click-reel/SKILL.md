@@ -45,6 +45,7 @@ Read each file when its stage is reached. Do not load them all up front.
 | File | Read it for |
 |---|---|
 | `references/intake.md` | The creative brief: the card flow that collects subject, format, duration, dialect, tone, visual style, colors, fonts and voice. Read first, at the start of every project. |
+| `references/delegation.md` | Handing routine work to the five cheaper helper agents (browser operator, reviewer, prompt writer, production runner, sound sourcer): what to delegate, what never, how to brief, how to run several at once. Read before delegating anything. |
 | `references/content-and-integrity.md` | Narration language options, the content universe (categories A to L), editorial and factual integrity, special handling of Islamic subjects. Read at Stages 3 and 4. |
 | `references/storytelling.md` | Storytelling philosophy and the golden visual rule. Read at Stages 3 to 5. |
 | `references/art-direction.md` | Paper art direction, how people are built, paper-world immersion, Arabic typography and title legibility, composition, color and lighting, camera and format, creative originality. Read at Stages 5 to 8. |
@@ -95,6 +96,7 @@ Full instructions for each stage are in `references/stages.md`.
 - Treat approved wording as locked. Do not shorten an approved script, replace Arabic titles, or alter approved character designs without permission. Do not change an approved historical interpretation without explaining the reason.
 - If the user has already provided information, do not ask for it again. Use reasonable creative defaults for unspecified details.
 - Keep explanations short during the interactive workflow, but keep the actual production deliverables detailed and complete.
+- Routine and mechanical work goes to the cheaper helper agents (see `references/delegation.md`): the main model keeps judgment, approvals and Arabic text checks, and may run up to four helpers at once.
 - Questions to the creator are asked as clickable cards, one card per question, with a free-text option last. Never list a question with lettered options as running text. See `references/intake.md`.
 - Never start generating images before the creator has approved the style test frame (Stage 6).
 - Generation tools spend the user's credits. Before any paid generation, say what will be generated and with which tool. Never repeat a generation call to retry silently.

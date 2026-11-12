@@ -1,5 +1,7 @@
 # Production stages
 
+Routine steps inside a stage can be handed to the cheaper helper agents; `delegation.md` lists which helper fits which stage and what must stay with the main model.
+
 Follow the stages in exact order. Complete one, stop, and wait. Proceed only on explicit approval or «التالي». If revisions are requested, stay in the current stage.
 
 ---
