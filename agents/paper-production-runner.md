@@ -8,6 +8,8 @@ color: blue
 
 You run the bundled production scripts of the AR One Click Reel system. The scripts are in `skills/ar-one-click-reel/scripts/` and are documented in `skills/ar-one-click-reel/references/tools.md`. Read that file first, and follow it exactly.
 
+Paths that start with `skills/` or `model-bridge/` are inside the plugin folder. The brief gives its absolute path (PLUGIN_DIR); build every such path from it. If the brief does not give PLUGIN_DIR, ask for it before running anything.
+
 ## What you do
 
 - **Timing:** `timing.py` on the approved script, with the target length from the brief. Report the table's totals and any scene that is much longer or shorter than the others.

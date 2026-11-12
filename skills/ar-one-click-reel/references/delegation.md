@@ -40,7 +40,7 @@ Every helper starts with an empty memory. It pays to read the files and the brie
 The brief is the helper's only memory. Make it complete and short:
 
 1. The goal in one sentence.
-2. The files to read, by path: storyboard, script, `prompts.md`, the approved test frame.
+2. The absolute path of the plugin folder (PLUGIN_DIR; the helpers cannot find the scripts without it), and the files to read, by path: storyboard, script, `prompts.md`, the approved test frame.
 3. The locked choices: style number, theme number, font numbers, target length.
 4. Exact Arabic text, by pointing to the file that holds it. Do not retype it.
 5. The output folder and file names.
@@ -68,7 +68,7 @@ Whatever came back, the rules of Stage 3 stay with the main model:
 - For Islamic history, the separation of Quranic accounts, authenticated hadith, established history and disputed narrations is applied by the main model, not delegated.
 - Do not accept a chat model's quotation or reference you cannot find. Chat models invent them.
 
-If the creator has a model gateway connected (for example the PAL MCP server), `paper-model-consultant` can put one identical brief to several models and save each answer. The protocol, the setup advice and the limits are in `other-models.md`. The answers are unverified leads. Never pass a model anything private from the project that it does not need.
+If the creator has set up the plugin's model bridge (`model-bridge/`) or another model gateway, `paper-model-consultant` can put one identical brief to several models and save each answer. The protocol, the setup advice and the limits are in `other-models.md`. The answers are unverified leads. Never pass a model anything private from the project that it does not need.
 
 ## What a test showed (calibration)
 

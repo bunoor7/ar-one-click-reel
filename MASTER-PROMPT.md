@@ -1592,7 +1592,7 @@ Every helper starts with an empty memory. It pays to read the files and the brie
 The brief is the helper's only memory. Make it complete and short:
 
 1. The goal in one sentence.
-2. The files to read, by path: storyboard, script, `prompts.md`, the approved test frame.
+2. The absolute path of the plugin folder (PLUGIN_DIR; the helpers cannot find the scripts without it), and the files to read, by path: storyboard, script, `prompts.md`, the approved test frame.
 3. The locked choices: style number, theme number, font numbers, target length.
 4. Exact Arabic text, by pointing to the file that holds it. Do not retype it.
 5. The output folder and file names.
@@ -1620,7 +1620,7 @@ Whatever came back, the rules of Stage 3 stay with the main model:
 - For Islamic history, the separation of Quranic accounts, authenticated hadith, established history and disputed narrations is applied by the main model, not delegated.
 - Do not accept a chat model's quotation or reference you cannot find. Chat models invent them.
 
-If the creator has a model gateway connected (for example the PAL MCP server), `paper-model-consultant` can put one identical brief to several models and save each answer. The protocol, the setup advice and the limits are in `other-models.md`. The answers are unverified leads. Never pass a model anything private from the project that it does not need.
+If the creator has set up the plugin's model bridge (`model-bridge/`) or another model gateway, `paper-model-consultant` can put one identical brief to several models and save each answer. The protocol, the setup advice and the limits are in `other-models.md`. The answers are unverified leads. Never pass a model anything private from the project that it does not need.
 
 ## What a test showed (calibration)
 
@@ -1716,11 +1716,14 @@ A model gateway lets Claude send the same question to other models (Gemini, GPT,
 
 The protocol below adapts ideas from the multi-model consult skill in the MIT-licensed repository `laurigates/claude-plugins` (its `multi-model-delegation` skill, which works through the PAL MCP server). Read that skill for the engineering details of PAL itself.
 
-## What this plugin does and does not ship
+## What this plugin ships
 
-- It ships **no gateway and no keys**. It does not register any MCP server for you. Installing a third-party server that runs on the creator's computer with the creator's API keys is the creator's own decision.
-- If the creator has a gateway connected (PAL or any other), the main model and the helper `paper-model-consultant` use it by the rules below.
-- If none is connected, skip this file. Use the browser route in `free-tools.md`, or do the work with Claude.
+- **The bundled bridge, `model-bridge/`** in the plugin folder: a small, readable program (Python, standard library plus `keyring`) written for this plugin. It asks other models with an identical prompt, saves each answer to a file, and generates images. The creator's API keys live in the operating system's secret store, typed through a hidden prompt, never in a file, a chat, a command line or an output. Its README explains the setup and exactly what it protects, and it has tests. It is **not set up by default**: the creator installs `keyring`, writes a config without keys, and stores keys by hand.
+- It registers **no MCP server by itself**. The creator can register the bridge with one command (see its README), or the helper uses its command line.
+- Any other gateway the creator already has (such as the PAL MCP server) works too by the same rules.
+- If nothing is set up, skip this file. Use the browser route in `free-tools.md`, or do the work with Claude.
+
+Never ask the creator to paste a key into the chat, and never read a key file. If a key is needed, send them to `model-bridge/README.md`. In a cloud session, use the credential request instead (the bridge README explains `proxy` mode).
 
 ## Setting up a gateway (for the creator, once)
 

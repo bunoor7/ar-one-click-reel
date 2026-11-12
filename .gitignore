@@ -1,3 +1,5 @@
 __pycache__/
+model-bridge/models.json
+model-bridge/usage.jsonl
 *.pyc
 .DS_Store
