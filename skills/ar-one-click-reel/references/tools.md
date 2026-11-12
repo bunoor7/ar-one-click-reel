@@ -27,6 +27,8 @@ What the step needs: vertical 9:16 output at high resolution, strong material re
 
 Where to run them: an aggregator connector if one is attached to the session (for example Higgsfield, ElevenLabs creative tools, or Artlist, each of which exposes several image models through a `generate_image`-style tool), or the user's own account on the model's site.
 
+Choosing the model: do not assume one. Ask the tool you are using which model suits the request (for example the Higgsfield model recommender, or the model list of the connector), prefer one that accepts reference images, and say which model you used. The Stage 6 test frame decides whether the model is acceptable: if its faces and hands come out cartoonish after the fixes in `stages.md`, change the model. Check the price of a generation with the tool's cost preview before a batch, and say what the batch will cost.
+
 Practical guidance:
 
 - Arabic titles: keep them to 2 to 4 words when they are generated inside the image. Longer titles fail much more often. Whatever the model, inspect the result at Stage 8.
@@ -34,24 +36,33 @@ Practical guidance:
 - Fixing one flaw in an otherwise good image: use image editing (inpainting or instruction-based editing) rather than regenerating the whole scene.
 - Upscale only the approved final images.
 
-## 3. Arabic titles in post-production (Stage 8)
+## 3. Fonts, boards and Arabic titles (brief and Stage 8)
 
-When the generator cannot render the title correctly, or when the title must survive animation untouched, render it with the bundled script. It uses real OpenType shaping (HarfBuzz through Pillow's Raqm layout), so letters are always joined and ordered correctly.
+The creator chooses fonts, colors and style from numbered boards, and the numbers are used everywhere after that.
 
 ```bash
-bash scripts/get_fonts.sh fonts
-
-# Burn a paper-cut title into a text-free scene image
-python3 scripts/arabic_title.py --image scene03_clean.png --out scene03.png \
-  --text "جنون التوليب" --font fonts/Lalezar-Regular.ttf \
-  --position top --color "#F4E9D0" --edge-color "#B89A62"
-
-# Or export the title alone on a transparent background, for the video editor
-python3 scripts/arabic_title.py --transparent --canvas 1080x1920 --out title03.png \
-  --text "جنون التوليب" --font fonts/Cairo.ttf --weight 800 --position top
+# rebuild the boards (fonts, palettes, styles), or just one
+python3 scripts/make_boards.py
+python3 scripts/make_boards.py fonts --sample "جنون التوليب"
 ```
 
-Match the scene: pick the face color from the scene's lightest paper, the edge color from a darker tone of the same hue, and set `--light` to the direction the scene's key light comes from, so the title's shadow falls the same way as the others. Run `python3 scripts/arabic_title.py --help` for all options.
+When the generator cannot render a title correctly, or when the title must survive animation untouched, render it with the bundled script. It uses real OpenType shaping (HarfBuzz through Pillow's Raqm layout), so letters are always joined and ordered correctly.
+
+```bash
+# Burn a paper-cut title into a text-free scene image: bundled font 5, color theme 3
+python3 scripts/arabic_title.py --image scene03_clean.png --out scene03.png \
+  --text "جنون التوليب" --font 5 --theme 3 --position top
+
+# Or export the title alone on a transparent background, for the video editor.
+# --check-against samples the real scene so the contrast is measured.
+python3 scripts/arabic_title.py --transparent --check-against scene03.png \
+  --out title03.png --text "جنون التوليب" --font 5 --theme 3
+```
+
+- `--font` takes a number from the font board, or a path to any `.ttf`/`.otf` Arabic font.
+- `--theme` supplies a title color and an edge color chosen for that theme. With the default `--color auto`, the script measures the background behind the title and picks the most readable color. If you set `--color` yourself and the contrast is below 4.5, it refuses and says why (`--force` overrides).
+- `--light` should be the direction the scene's key light comes from, so the title's shadow falls the same way as the others.
+- Run `python3 scripts/arabic_title.py --help` for all options.
 
 Requirement: Pillow built with Raqm support (`python3 -c "from PIL import features; print(features.check('raqm'))"`). Without it the script falls back to `arabic-reshaper` and `python-bidi` if installed, and otherwise refuses to run rather than output broken Arabic.
 
@@ -67,9 +78,11 @@ What the step needs: natural Arabic delivery in the chosen register or dialect, 
 | A human recording | Still the best result for dialect. The script from Stage 4 is the recording sheet. |
 | Other TTS (OpenAI, Google, Azure) | Usable for Modern Standard Arabic. Dialects are weaker. |
 
+The voice is chosen in the brief (see `intake.md`, the voice card). The creator's own voice, «عبدالمنعم إبراهيم», is always the first option; it exists only in the author's ElevenLabs account unless published, so look it up before offering it and say plainly when it is not available.
+
 Practical guidance:
 
-- Present two or three candidate voices and let the user choose. Say which one was picked.
+- Generate a sample of the first line with the chosen voice and get approval before generating the whole narration. Never generate with a voice the creator did not choose.
 - Dialect narration: the text drives the dialect. Keep the approved dialect spelling exactly as written and choose a voice whose native accent matches.
 - Add selective vowel marks (tashkeel) only on words the engine mispronounces, proper names first. Do not vowel the whole script.
 - Write numbers and dates out in words, as they should be spoken.

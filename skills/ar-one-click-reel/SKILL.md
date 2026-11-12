@@ -44,21 +44,29 @@ Read each file when its stage is reached. Do not load them all up front.
 
 | File | Read it for |
 |---|---|
-| `references/content-and-integrity.md` | Narration language options, the content universe (categories A to L), editorial and factual integrity, special handling of Islamic subjects. Read at Stages 2 to 4. |
+| `references/intake.md` | The creative brief: the card flow that collects subject, format, duration, dialect, tone, visual style, colors, fonts and voice. Read first, at the start of every project. |
+| `references/content-and-integrity.md` | Narration language options, the content universe (categories A to L), editorial and factual integrity, special handling of Islamic subjects. Read at Stages 3 and 4. |
 | `references/storytelling.md` | Storytelling philosophy and the golden visual rule. Read at Stages 3 to 5. |
-| `references/art-direction.md` | Paper art direction, paper-world immersion, Arabic typography, composition, color and lighting, camera and format, creative originality. Read at Stages 5 to 8. |
+| `references/art-direction.md` | Paper art direction, how people are built, paper-world immersion, Arabic typography and title legibility, composition, color and lighting, camera and format, creative originality. Read at Stages 5 to 8. |
 | `references/characters.md` | Character design and continuity. Read at Stage 6. |
 | `references/animation-and-sound.md` | Animation philosophy, timing and narration sync, sound design. Read at Stages 9 and 10. |
 | `references/stages.md` | The full specification of every production stage. Read the section for the current stage before executing it. |
 | `references/prompt-templates.md` | English templates: character sheet, scene image, text-free scene, universal animation prompt. Read at Stages 6, 7 and 9. |
 | `references/tools.md` | Which tool to use for images, voice, video, sound effects, music, fonts and assembly, and how to use the bundled scripts. Read before any generation or assembly step. |
-| `references/arabic-fonts.md` | Open-licence Arabic fonts by genre. Read at Stages 5 and 8. |
+| `references/arabic-fonts.md` | The bundled Arabic fonts, their numbers, and which genre each suits. Read at the font card and at Stage 8. |
+
+Bundled assets (`assets/`):
+
+- `fonts/`: 18 open-licence Arabic fonts (SIL OFL, licences in `fonts/licenses/`), numbered in `fonts.json`.
+- `palettes.json`: 12 color themes, each with a title color checked for contrast against its background.
+- `styles.json`: 6 paper styles with their prompt text, and the rule for building people.
+- `font-board.png`, `palette-board.png`, `style-board.png`: the numbered boards shown to the creator (rebuilt by `scripts/make_boards.py`).
 
 Bundled scripts (run with `python3`, paths relative to this skill folder):
 
+- `scripts/make_boards.py`: builds the numbered font, palette and style boards.
 - `scripts/timing.py`: turns a numbered script into per-scene durations and a cumulative timeline.
-- `scripts/get_fonts.sh`: downloads the open-licence Arabic fonts listed in `references/arabic-fonts.md`.
-- `scripts/arabic_title.py`: renders an exact, correctly shaped Arabic title as a paper-cut layer, onto an image or as a transparent PNG. This is the post-production fallback whenever a generator cannot render the Arabic correctly.
+- `scripts/arabic_title.py`: renders an exact, correctly shaped Arabic title as a paper-cut layer, onto an image or as a transparent PNG. It picks a readable color for the background and refuses a title that would be hard to read. It is the post-production fallback whenever a generator cannot render the Arabic correctly.
 - `scripts/assemble.py`: assembles the approved clips, narration, sound effects and music into the final 9:16 video with ffmpeg, from a JSON manifest.
 
 ## 4. Production workflow
@@ -67,12 +75,11 @@ Follow the stages in this exact order. Complete one stage at a time, then stop a
 
 | # | Stage | Output |
 |---|---|---|
-| 1 | Subject discovery | The subject |
-| 2 | Format, duration and language | Format, length, narration style, tone |
+| 1-2 | Creative brief (cards, see `intake.md`) | Subject, format, duration, dialect, tone, visual style, colors, fonts, voice |
 | 3 | Research and story concept | Verified factual foundation and concept sheet |
 | 4 | Complete Arabic script | Numbered voiceover script with timing |
 | 5 | Visual storyboard | Scene-by-scene storyboard |
-| 6 | Character references and visual identity lock | Approved reference images |
+| 6 | Style test frame, character references and visual identity lock | An approved test frame and approved reference images |
 | 7 | Scene image prompts and generation | English prompts and generated scene images |
 | 8 | Arabic text verification | Inspected typography, fallbacks where needed |
 | 9 | Animation prompt production | Universal animation prompt and animated clips |
@@ -88,6 +95,8 @@ Full instructions for each stage are in `references/stages.md`.
 - Treat approved wording as locked. Do not shorten an approved script, replace Arabic titles, or alter approved character designs without permission. Do not change an approved historical interpretation without explaining the reason.
 - If the user has already provided information, do not ask for it again. Use reasonable creative defaults for unspecified details.
 - Keep explanations short during the interactive workflow, but keep the actual production deliverables detailed and complete.
+- Questions to the creator are asked as clickable cards, one card per question, with a free-text option last. Never list a question with lettered options as running text. See `references/intake.md`.
+- Never start generating images before the creator has approved the style test frame (Stage 6).
 - Generation tools spend the user's credits. Before any paid generation, say what will be generated and with which tool. Never repeat a generation call to retry silently.
 - Never mark an image, video, or audio file as verified unless it has actually been inspected.
 
@@ -103,4 +112,4 @@ Always prioritize, in this order:
 
 The final goal is not merely to create beautiful images. It is to produce a coherent, engaging, visually distinctive Arabic cinematic experience.
 
-Begin with Stage 1 only.
+Begin with the creative brief (`references/intake.md`) only.

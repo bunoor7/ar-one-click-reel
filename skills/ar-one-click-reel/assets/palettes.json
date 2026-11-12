@@ -1,0 +1,17 @@
+{
+  "roles": ["background", "primary", "secondary", "accent", "deep"],
+  "palettes": [
+    {"id": 1,  "ar": "تراثي دافئ",     "en": "Warm heritage",   "mood": "تاريخ، وثائقي",        "colors": ["#E9D8B4", "#6B4423", "#B86B4B", "#C9A227", "#2E1F14"], "title": "#4A2C17", "title_edge": "#C9A227"},
+    {"id": 2,  "ar": "إسلامي",         "en": "Islamic",         "mood": "تاريخ إسلامي، عمارة",  "colors": ["#E8DCC0", "#1F5B43", "#F5EFE0", "#B8963E", "#12372A"], "title": "#12372A", "title_edge": "#B8963E"},
+    {"id": 3,  "ar": "خليجي بحري",     "en": "Gulf sea",        "mood": "الخليج، اللؤلؤ، البحر","colors": ["#EADFC8", "#1E5A7A", "#F7F3EA", "#D9534F", "#123247"], "title": "#123247", "title_edge": "#D9534F"},
+    {"id": 4,  "ar": "سياسي رسمي",     "en": "Political formal","mood": "سياسة، دبلوماسية",     "colors": ["#1B2A41", "#7A1F2B", "#3A3F47", "#C2A14D", "#EDE6D6"], "title": "#EDE6D6", "title_edge": "#C2A14D"},
+    {"id": 5,  "ar": "رياضي",          "en": "Sports",          "mood": "رياضة، حماس",          "colors": ["#0F3D2E", "#F2F2F2", "#E63946", "#FFD23F", "#0A1F18"], "title": "#FFFFFF", "title_edge": "#FFD23F"},
+    {"id": 6,  "ar": "علمي وفضائي",    "en": "Science & space", "mood": "علوم، فضاء، تقنية",    "colors": ["#101833", "#2EC4D6", "#6C4AB6", "#C9CED6", "#F1F5FA"], "title": "#F1F5FA", "title_edge": "#2EC4D6"},
+    {"id": 7,  "ar": "اقتصادي",        "en": "Economics",       "mood": "اقتصاد، أعمال، مال",   "colors": ["#F1EEE6", "#0E6B4F", "#33373B", "#D4A64A", "#1D2124"], "title": "#0E4D3A", "title_edge": "#D4A64A"},
+    {"id": 8,  "ar": "غموض",           "en": "Mystery",         "mood": "ألغاز، تحقيق",         "colors": ["#1A1F2B", "#4A5D78", "#7B2D3A", "#BFC5CE", "#E4E0D8"], "title": "#E4E0D8", "title_edge": "#7B2D3A"},
+    {"id": 9,  "ar": "أطفال مرح",      "en": "Playful kids",    "mood": "قصص أطفال، تعليم",     "colors": ["#FFF3D6", "#FF8A5B", "#4FB3BF", "#FFD166", "#3D405B"], "title": "#3D405B", "title_edge": "#FF8A5B"},
+    {"id": 10, "ar": "صحراء الغروب",   "en": "Desert sunset",   "mood": "رحلات، قوافل، ملاحم",  "colors": ["#F0C987", "#C8553D", "#7A3E2B", "#F28F3B", "#3B1F1A"], "title": "#3B1F1A", "title_edge": "#C8553D"},
+    {"id": 11, "ar": "طبيعة",          "en": "Nature",          "mood": "حيوانات، بيئة، أرض",   "colors": ["#E6EAD3", "#4F7942", "#8B6B43", "#D98E32", "#26391F"], "title": "#26391F", "title_edge": "#D98E32"},
+    {"id": 12, "ar": "وثيقة أرشيفية",  "en": "Archive document","mood": "أرشيف، صحافة، تحقيق",  "colors": ["#EDEAE3", "#2B2B2B", "#8C8C8C", "#B3261E", "#111111"], "title": "#111111", "title_edge": "#B3261E"}
+  ]
+}

@@ -4,46 +4,15 @@ Follow the stages in exact order. Complete one, stop, and wait. Proceed only on 
 
 ---
 
-## Stage 1: Subject discovery
+## Stages 1 and 2: Creative brief
 
-Ask in Arabic:
+Run the card flow in `intake.md`. It collects, one card at a time: subject, format, duration, dialect, tone, visual style, color theme, primary and secondary fonts, and voice, and ends with a confirmation card.
 
-«ما الموضوع الذي تريد تحويله إلى فيديو سينمائي بتقنية الورق المقصوص؟»
+- If the creator already gave the subject or any other choice in the request, do not ask for it again.
+- Report, in one or two lines before the first card, which production tools are available in this session (images, voice, video, sound), so the creator knows early what will be generated here and what they will run themselves. See `tools.md`.
+- Use reasonable creative defaults for anything the creator leaves open, and show them on the confirmation card.
 
-Offer a diverse collection of example directions, one each from: history, Islamic history, sports personalities, political personalities, short fictional stories, science and space, nature, economics and business, technology, general knowledge, mysteries and surprising facts, unusual creative ideas.
-
-Do not restrict the user to those examples. Make it clear that any subject is welcome. If the subject was already provided, do not ask again.
-
-Stop and wait.
-
----
-
-## Stage 2: Format, duration and language
-
-Once the subject is known, ask the user to select the production format:
-
-A. Documentary explainer
-B. Cinematic historical story
-C. Biographical portrait
-D. Sports documentary
-E. Political documentary
-F. Islamic historical narrative
-G. Fictional short film
-H. Mystery or surprising-fact story
-I. Educational explainer
-J. Experimental visual storytelling
-
-Offer durations: 30 seconds, 1 minute, 2 minutes, 3 minutes, 5 minutes, or a custom duration.
-
-Ask for narration style: Modern Standard Arabic, simple conversational Arabic, Bahraini Arabic, another specified dialect, literary dramatic Arabic, or child-friendly Arabic.
-
-Ask whether the preferred presentation is serious documentary, dramatic, inspirational, mysterious, educational, humorous, surprising, or emotional.
-
-Also report, in one or two lines, which production tools are available in this session (image, voice, video, sound), so the user knows early what will be generated here and what they will run themselves. See `tools.md`.
-
-Allow the user to choose only the options that matter. Do not request information already supplied. Use reasonable creative defaults for unspecified details.
-
-Stop and wait.
+Stop at the confirmation card and wait for «ابدأ العمل».
 
 ---
 
@@ -95,6 +64,8 @@ D. A brief note identifying any factual uncertainties that affect the script.
 
 Save the script as a text file with one numbered beat per line and run `scripts/timing.py` on it to produce B and C rather than estimating by eye.
 
+If the creator chose to record the voice themselves in the brief, also hand over the approved narration as a recording sheet: one numbered beat per block, pronunciation notes for names, numbers written out as they are spoken, and the pauses marked. Do this after the script is approved.
+
 Do not produce image prompts yet.
 
 At the end, write: «راجع النص، ثم اكتب: التالي»
@@ -129,13 +100,26 @@ All storyboard explanations are in Arabic.
 - If a date, name, or number is essential, include it only when verified.
 - Ensure the image meaning matches the narration. Do not force unrelated symbolism into the scene.
 - Maintain a coherent visual flow across scenes.
-- Propose one Arabic typeface for the whole project from `arabic-fonts.md`.
+- Use the primary and secondary fonts the creator chose in the brief, and the chosen color theme. Do not propose different ones. Write the theme's hex values into the storyboard header so every later prompt repeats them.
 
 Stop and wait for approval.
 
 ---
 
-## Stage 6: Character reference generation and visual identity lock
+## Stage 6: Style test frame, character references and visual identity lock
+
+**Step 0: Style test frame (mandatory, even when there are no characters).** Before generating anything else, generate exactly one test frame in the style the creator chose, using the style's prompt from `assets/styles.json`, the chosen color theme, and the people rule. If the project has people, the frame must include a face and a hand, because that is where generators slide into a cartoon look. Ask the image tool which model suits the request (for example the Higgsfield model recommender) instead of assuming one, and say which model was used.
+
+Inspect the frame yourself against this list, then present it:
+
+- Is it paper, or is it a cartoon or a soft 3D render? Check faces and hands first.
+- Are the cut edges, layer steps and paper thickness visible?
+- Does it use the chosen colors and nothing far outside them?
+- Is the style the one the creator picked?
+
+If it fails, fix it in this order, and show the corrected frame: (1) strengthen the people rule and the negative list in the prompt; (2) simplify people, with fewer features, in profile or from behind, or as silhouettes; (3) attach the best earlier frame as a style reference; (4) change the model. Do not generate the other scenes until the creator approves the test frame. The approved frame is then attached as a style reference to every later scene.
+
+Then continue with the character steps below.
 
 Before generating any final scene images, establish and approve a consistent visual identity for every recurring character. This stage is mandatory whenever the project contains recurring human characters, fictional characters, animals, or distinctive recurring objects.
 
@@ -184,7 +168,9 @@ For every storyboard scene, write one production-ready image prompt in English u
 - Paper construction details, palette, lighting, camera.
 - Character identity instructions that point to the approved reference image.
 - The exact Arabic title in quotation marks, its placement in reserved negative space, and its typography style. State that no other text may appear.
-- A negative list: no flat vector look, no plastic or glossy 3D, no real-world set, no hands, no extra text, no pseudo-Arabic.
+- The chosen style's prompt text and the color theme's hex values, repeated in every prompt, and the people rule for any scene with people.
+- The approved test frame attached as a style reference.
+- A negative list: no flat vector look, no cartoon, no plastic or glossy 3D, no real-world set, no hands of a real person, no extra text, no pseudo-Arabic.
 
 For each scene also prepare a text-free variant of the same prompt (the title area left as clean negative space). It is used when the generator fails to render the Arabic correctly, and as the source frame for animation when the title is added in the edit.
 
@@ -213,7 +199,7 @@ Before approving the generated images, perform a typography verification stage. 
 - Are any letters mirrored, missing, or extra?
 - Are punctuation marks correct?
 - Are dates and numbers accurate?
-- Is the title readable on a mobile screen?
+- Is the title readable on a mobile screen? Measure the contrast between the title and what is behind it; it must be at least 4.5. A title that is only slightly lighter or darker than its background fails, even if the letters are correct.
 - Does it overlap an important visual object?
 - Is the text constructed from paper rather than pasted as digital typography?
 
@@ -224,7 +210,7 @@ If the generator cannot render the text correctly, provide:
 A. A revised Arabic typography prompt (one retry is usually enough to know whether the model can do it).
 B. The clean image without typography, from the text-free prompt.
 C. A separate exact Arabic text overlay specification: wording, typeface, size, position, color.
-D. The overlay itself, rendered with `scripts/arabic_title.py` in a paper-cut style matched to the scene's palette and light direction, or instructions for matching it in the user's editor.
+D. The overlay itself, rendered with `scripts/arabic_title.py` using the chosen font number and theme number, in a paper-cut style matched to the scene's light direction, or instructions for matching it in the user's editor. The script checks the contrast for you; run it with the scene image so that it samples the real background.
 
 Never modify the approved Arabic wording without permission.
 
@@ -277,7 +263,7 @@ Make sure the total duration aligns with the selected video length. Do not hide 
 
 When the user wants the production carried out here and the tools are available:
 
-1. Generate the voiceover from the approved script (see `tools.md`). Present the voice choice first. Flag proper names whose pronunciation needs review.
+1. Voiceover. If the creator records it, collect their files and use them. If you generate it, use the voice chosen in the brief (see `intake.md` and `tools.md`): generate a sample of the first line, get approval, then generate the rest. Flag proper names whose pronunciation needs review.
 2. Measure the real duration of each narration line and update the scene durations.
 3. Gather sound effects and, if requested, music.
 4. Write the manifest and run `scripts/assemble.py` to produce a first cut.

@@ -37,6 +37,16 @@ Non-paper materials are interpreted through paper craftsmanship:
 | Skin | Carefully layered matte paper in suitable natural tones |
 | Sand | Fine textured kraft paper and layered terrain |
 
+## Building people (the cartoon trap)
+
+Image generators drift toward a cartoon or soft 3D look the moment a face or a hand appears, even when the rest of the scene is convincing paper. People need their own rule, repeated in every prompt that contains them (the text is in `assets/styles.json` as `people_rule`):
+
+- Faces and hands are built from a few flat cardstock shapes with hard scissor-cut edges and visible layer steps.
+- Features are simple cut-outs. No smooth shading, no rounded 3D volume, no glossy eyes, no cartoon grin, no clay, no toy or animated-film look.
+- Skin and clothing are matte paper in flat tones from the chosen color theme.
+- When a face keeps coming out cartoonish, simplify rather than describe more: show the figure in profile, from behind, as a silhouette, or show only the hands and the object.
+- All people in the project must look like the same hand: same method, same level of detail, same materials. Attach the approved test frame as a style reference to keep it so.
+
 ## Paper-world immersion
 
 The entire world shown in the image must be constructed from paper. Do not show:
@@ -83,7 +93,8 @@ Matching open-licence fonts are listed in `arabic-fonts.md`.
 - Prefer short titles: 2 to 6 Arabic words. Use longer text only when necessary. Avoid large blocks of writing.
 - Never add arbitrary decorative Arabic writing.
 - The text must not cover the main subject. Place titles in intentionally reserved negative space.
-- Maintain clear contrast between lettering and background.
+- Maintain clear contrast between lettering and background: at least 4.5 to 1, measured against the area directly behind the title. Light cream lettering on a beige scene fails. Each color theme in `assets/palettes.json` carries a title color chosen for its background, and `scripts/arabic_title.py` measures the contrast and refuses a weak one.
+- Titles are paper, not a flat overlay: bold weight, real thickness, an edge color distinct from the face, and a shadow that falls the same way as the scene's other shadows.
 
 If exact Arabic typography cannot be generated reliably, provide a clean text-free alternative scene and a separate Arabic typography overlay specification for post-production, then render the title with `scripts/arabic_title.py`.
 

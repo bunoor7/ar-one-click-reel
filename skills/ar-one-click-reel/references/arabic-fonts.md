@@ -1,8 +1,10 @@
-# Arabic fonts by genre
+# Arabic fonts
 
-All fonts below are published under the SIL Open Font License on Google Fonts, so they can be used freely in commercial videos. `scripts/get_fonts.sh` downloads them into a `fonts/` folder.
+Eighteen open-licence fonts (SIL Open Font License, published on Google Fonts) are bundled in `assets/fonts/`, with their licence texts in `assets/fonts/licenses/`. They are numbered in `assets/fonts.json`, and `assets/font-board.png` shows every one in its real letterforms with its number.
 
-Use one typeface per project. A second is acceptable only for a clear role split, for example titles and dates.
+The creator picks two numbers in the brief: a primary font for titles and a secondary font for dates, numbers and secondary text. Use one pair per project. Pass the number to `scripts/arabic_title.py --font N`.
+
+Which font suits which genre:
 
 | Genre | Recommended | File | Character |
 |---|---|---|---|
@@ -27,7 +29,7 @@ Use one typeface per project. A second is acceptable only for a clear role split
 
 Notes:
 
-- Files without a weight in their name are variable fonts. Choose the weight with `--weight` in `scripts/arabic_title.py` (700 is a good default for titles).
+- Variable fonts have a default weight in `fonts.json`. Override it with `--weight` in `scripts/arabic_title.py` (700 to 800 reads best for titles).
 - Paper-cut letters need mass. Prefer bold and heavy weights: thin strokes read as fragile and disappear at mobile size.
 - Calligraphic faces (Aref Ruqaa, Rakkas) are for short titles only. Use a plain face for dates, numbers, and anything longer than four words.
 - For Quranic text, do not typeset it in a display face. Use verified text and a Naskh face, and have the user confirm the wording against a printed Mushaf.

@@ -1,0 +1,24 @@
+{
+  "test_scene": "A Gulf Arab merchant in a white thobe and ghutra standing at a small souq stall, holding a single coin in his open palm, a wooden dhow on the sea behind him.",
+  "styles": [
+    {"id": 1, "ar": "ديوراما ورقية متعددة الطبقات", "en": "Layered paper diorama", "image": "styles/01.jpg",
+     "desc": "طبقات كثيرة من الورق المقوّى بعمق حقيقي وظلال بين الطبقات. الأسلوب الأساسي للنظام.",
+     "prompt": "Deep layered paper-cut shadowbox diorama: dozens of stacked hand-cut cardstock layers with clear physical gaps and soft shadows between them, visible cut edges and paper thickness."},
+    {"id": 2, "ar": "كولاج ورقي مسطّح", "en": "Flat cut-paper collage", "image": "styles/02.jpg",
+     "desc": "قصاصات مسطحة بحواف ممزقة ومقصوصة، وملمس ورق قديم ومطبوعات. قريب من أسلوب الشرح التحريري.",
+     "prompt": "Flat editorial cut-paper collage: overlapping flat paper cut-outs with scissor-cut and torn edges, vintage printed paper and halftone textures, shallow depth, thin drop shadows, shot straight-on like a collage on a table of paper."},
+    {"id": 3, "ar": "أوريغامي مطوي", "en": "Folded origami", "image": "styles/03.jpg",
+     "desc": "أشكال هندسية من ورق مطوي بطيّات حادة وأسطح مضلّعة.",
+     "prompt": "Origami world: every figure and object is folded from single sheets of paper with crisp creases, flat faceted planes and sharp geometric folds, no curves, visible fold lines."},
+    {"id": 4, "ar": "مسرح الظل الورقي", "en": "Paper shadow theatre", "image": "styles/04.jpg",
+     "desc": "ظلال ورقية داكنة مقصوصة أمام خلفيات مضيئة من الخلف. درامي ومناسب للشخصيات التي لا تُصوَّر ملامحها.",
+     "prompt": "Backlit paper shadow theatre: dark cut-paper silhouettes with no facial features, arranged in receding layers in front of warm glowing translucent paper backdrops, strong rim light, deep atmospheric layering."},
+    {"id": 5, "ar": "كرتون مقوّى وورق كرافت", "en": "Cardboard and kraft", "image": "styles/05.jpg",
+     "desc": "كرتون مموّج وورق كرافت بني بحواف خشنة ظاهرة. يدوي وخام.",
+     "prompt": "Handmade corrugated cardboard and brown kraft paper world: visible corrugated flute edges, rough hand-cut contours, layered cardboard relief, limited earthy palette with a few colored paper accents."},
+    {"id": 6, "ar": "لفائف الورق (كويلينغ)", "en": "Paper quilling", "image": "styles/06.jpg",
+     "desc": "شرائط ورق ملفوفة ومثنية على حافتها ترسم الأشكال. زخرفي ومناسب للعمارة والنقوش.",
+     "prompt": "Paper quilling artwork: shapes drawn with thin paper strips standing on edge, coiled, curled and looped, filling forms with tight spirals, on a flat paper base, seen slightly from above with fine shadows from every strip."}
+  ],
+  "people_rule": "All people are flat-layered cut-paper figures: faces and hands are built from a few flat cardstock shapes with hard scissor-cut edges and visible layer steps, simple cut-out features, matte paper only. No smooth shading, no rounded 3D volume, no glossy eyes, no cartoon grin, no clay, no Pixar or toy look."
+}

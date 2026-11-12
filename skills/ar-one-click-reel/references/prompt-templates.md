@@ -18,11 +18,36 @@ camera, prime lens, controlled shallow depth of field, sharp paper texture.
 Vertical 9:16, highest quality, premium cinematic detail.
 ```
 
+### 1b. Style line (the style the creator chose)
+
+Paste the `prompt` text of the chosen style from `assets/styles.json` right after the style block, for example for style 2: "Flat editorial cut-paper collage: overlapping flat paper cut-outs with scissor-cut and torn edges...". The style block above describes the default layered diorama; where the chosen style differs (flat collage, origami, shadow theatre, cardboard, quilling), the style line wins and you should delete the contradicting sentences from the block.
+
+### 1c. People block (every scene with a person)
+
+Paste the `people_rule` from `assets/styles.json`:
+
+```
+All people are flat-layered cut-paper figures: faces and hands are built from
+a few flat cardstock shapes with hard scissor-cut edges and visible layer
+steps, simple cut-out features, matte paper only. No smooth shading, no
+rounded 3D volume, no glossy eyes, no cartoon grin, no clay, no Pixar or toy
+look.
+```
+
+### 1d. Palette line (every prompt)
+
+Repeat the chosen theme from `assets/palettes.json`, with the hex values:
+
+```
+Color palette, and nothing far outside it: background paper {#bg}, primary
+{#primary}, secondary {#secondary}, accent {#accent}, deep shadow tone {#deep}.
+```
+
 ## 2. Negative block (reuse in every image prompt)
 
 ```
-Not a flat vector illustration, not a digital cartoon, not glossy 3D render,
-not plastic, not clay, not printed stickers. No real desk, no studio, no
+Not a flat vector illustration, not a digital cartoon, not an animated film
+still, not glossy or soft 3D render, not plastic, not clay, not printed stickers. No real desk, no studio, no
 frame, no canvas, no screen, no hands, no tools, no support stands.
 No extra text, no captions, no watermarks, no logos, no pseudo-Arabic,
 no Latin letters.
@@ -48,7 +73,7 @@ expressions ({expressions}) and one close-up of {accessory / costume detail}.
 The same character in every view: identical face, proportions, colors and
 paper materials.
 
-[STYLE BLOCK]
+[STYLE BLOCK] [STYLE LINE] [PEOPLE BLOCK] [PALETTE LINE]
 [NEGATIVE BLOCK] No text labels.
 ```
 
@@ -80,7 +105,8 @@ style, color {color}, with real paper thickness, exposed edges and small
 contact shadows. The Arabic reads right to left with correctly shaped,
 correctly joined letters, spelled exactly as written. No other text anywhere.
 
-[STYLE BLOCK]
+[STYLE BLOCK] [STYLE LINE] [PEOPLE BLOCK if people] [PALETTE LINE]
+Attach the approved style test frame as a style reference.
 [NEGATIVE BLOCK]
 ```
 

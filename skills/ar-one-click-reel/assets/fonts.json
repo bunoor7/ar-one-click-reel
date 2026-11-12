@@ -1,0 +1,23 @@
+{
+  "sample": "رحلة الورق ١٩٥٩",
+  "fonts": [
+    {"id": 1,  "file": "Amiri-Bold.ttf",              "name": "Amiri",               "ar": "أميري",            "style": "نسخ كلاسيكي",        "best_for": "التاريخ"},
+    {"id": 2,  "file": "ArefRuqaa-Bold.ttf",          "name": "Aref Ruqaa",          "ar": "عارف رقعة",        "style": "رقعة خطية",          "best_for": "التاريخ الأدبي، عناوين قصيرة"},
+    {"id": 3,  "file": "NotoNaskhArabic.ttf",         "name": "Noto Naskh Arabic",   "ar": "نوتو نسخ",         "style": "نسخ واضح هادئ",      "best_for": "التاريخ الإسلامي", "weight": 700},
+    {"id": 4,  "file": "ReemKufi.ttf",                "name": "Reem Kufi",           "ar": "ريم كوفي",         "style": "كوفي هندسي",         "best_for": "عناوين التاريخ الإسلامي", "weight": 700},
+    {"id": 5,  "file": "Lalezar-Regular.ttf",         "name": "Lalezar",             "ar": "لاله زار",         "style": "عريض صاخب",          "best_for": "الرياضة"},
+    {"id": 6,  "file": "Changa.ttf",                  "name": "Changa",              "ar": "تشانغا",           "style": "عريض مضغوط",         "best_for": "الرياضة الحديثة", "weight": 800},
+    {"id": 7,  "file": "NotoKufiArabic.ttf",          "name": "Noto Kufi Arabic",    "ar": "نوتو كوفي",        "style": "كوفي رسمي",          "best_for": "السياسة", "weight": 700},
+    {"id": 8,  "file": "IBMPlexSansArabic-Bold.ttf",  "name": "IBM Plex Arabic","ar": "آي بي إم بلكس",    "style": "محايد مؤسسي",        "best_for": "الأخبار والسياسة"},
+    {"id": 9,  "file": "Cairo.ttf",                   "name": "Cairo",               "ar": "القاهرة",          "style": "حديث نظيف",          "best_for": "العلوم والتقنية", "weight": 800},
+    {"id": 10, "file": "ReadexPro.ttf",               "name": "Readex Pro",          "ar": "ريدكس برو",        "style": "هندسي عريض",         "best_for": "العلوم والتقنية", "weight": 700},
+    {"id": 11, "file": "Alexandria.ttf",              "name": "Alexandria",          "ar": "الإسكندرية",       "style": "تحريري حديث واثق",   "best_for": "الاقتصاد والأعمال", "weight": 800},
+    {"id": 12, "file": "ElMessiri.ttf",               "name": "El Messiri",          "ar": "المسيري",          "style": "حديث بلمسة خطية",    "best_for": "الاقتصاد، الثقافة", "weight": 700},
+    {"id": 13, "file": "BalooBhaijaan2.ttf",          "name": "Baloo Bhaijaan 2",    "ar": "بالو بهيجان",      "style": "مستدير ودود",        "best_for": "قصص الأطفال", "weight": 800},
+    {"id": 14, "file": "Marhey.ttf",                  "name": "Marhey",              "ar": "مرحي",             "style": "ناعم مرح",           "best_for": "الأطفال", "weight": 700},
+    {"id": 15, "file": "Rakkas-Regular.ttf",          "name": "Rakkas",              "ar": "رقّاص",            "style": "درامي عالي التباين", "best_for": "الغموض، عناوين قصيرة"},
+    {"id": 16, "file": "MarkaziText.ttf",             "name": "Markazi Text",        "ar": "مركزي",            "style": "نسخ داكن مضغوط",     "best_for": "الغموض، النصوص الفرعية", "weight": 700},
+    {"id": 17, "file": "Lemonada.ttf",                "name": "Lemonada",            "ar": "ليمونادة",         "style": "ناعم دافئ",          "best_for": "القصص العاطفية", "weight": 700},
+    {"id": 18, "file": "Tajawal-Bold.ttf",            "name": "Tajawal",             "ar": "تجوال",            "style": "واضح لكل الاستخدامات","best_for": "عام، تواريخ وأرقام"}
+  ]
+}
