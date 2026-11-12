@@ -4,6 +4,8 @@ Many image and video generators on the web give a free allowance: a few generati
 
 Free allowances change often and differ by country and account. **Never state a quota from memory.** Read what the site itself shows, and record it.
 
+A model gateway with the creator's own API keys (some providers give a free API allowance) is another way to use free allowances, for text work. See `other-models.md`.
+
 ## Rules
 
 - **The creator signs in, not the helper.** The helper never creates an account, never types a password, never solves a captcha. If a site needs sign-in, the creator does it in their own browser, then the helper continues.

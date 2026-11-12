@@ -2,7 +2,7 @@
 
 If your assistant cannot start helper agents, ignore the helper names below and do the same tasks yourself with the same checklists.
 
-The plugin ships six helper agents (in the plugin's `agents/` folder). Each runs on a cheaper model than the main one. The main model plans, decides and approves. The helpers carry out routine, well-defined tasks and report back. You can start several at once.
+The plugin ships seven helper agents (in the plugin's `agents/` folder). Each runs on a cheaper model than the main one. The main model plans, decides and approves. The helpers carry out routine, well-defined tasks and report back. You can start several at once.
 
 **The principle: delegate execution, keep judgment.** A helper may run a script, fill a template, operate a website, or check a list. It may not decide what is true, what the creator approved, or whether a result is good enough.
 
@@ -12,6 +12,7 @@ The plugin ships six helper agents (in the plugin's `agents/` folder). Each runs
 |---|---|---|---|
 | `paper-browser-operator` | Sonnet | Running the finished English prompts on the creator's own signed-in websites in Chrome (Gemini, ChatGPT or another generator) and saving the images or videos | Writing or changing prompts, logging in, anything that costs money beyond the brief |
 | `paper-web-researcher` | Haiku | The long reading work of research: searches and reads pages, returns claims with source, quote, date and conflicts | Choosing which version is true, writing conclusions, quotations without a found source |
+| `paper-model-consultant` | Haiku | Sending one identical brief to other AI models through a connected model gateway, and saving each raw answer. For second opinions and routine text work on a free or cheaper model | Reading or deciding between the answers, sending private material, anything with no gateway connected |
 | `paper-reviewer` | Haiku | First-pass checking: Arabic titles against the approved wording, title contrast, images against the style and colors, timing, file lists, narration against the script. It cannot edit | Final approval, facts, anything it cannot open or measure |
 | `paper-prompt-writer` | Haiku | Filling the image-prompt templates for every scene of an approved storyboard | Designing scenes, changing Arabic wording |
 | `paper-production-runner` | Haiku | Running `timing.py`, `arabic_title.py`, `make_boards.py`, writing the manifest and running `assemble.py`, file and duration checks | Choosing fonts, colors, positions or durations, judging images |
@@ -67,7 +68,7 @@ Whatever came back, the rules of Stage 3 stay with the main model:
 - For Islamic history, the separation of Quranic accounts, authenticated hadith, established history and disputed narrations is applied by the main model, not delegated.
 - Do not accept a chat model's quotation or reference you cannot find. Chat models invent them.
 
-If the creator provides a plugin or connector that lets Claude call other models directly, use it for the same purpose: send the question with the same rules, save the answer as unverified, and verify before use. Never pass a model anything private from the project that it does not need.
+If the creator has a model gateway connected (for example the PAL MCP server), `paper-model-consultant` can put one identical brief to several models and save each answer. The protocol, the setup advice and the limits are in `other-models.md`. The answers are unverified leads. Never pass a model anything private from the project that it does not need.
 
 ## What a test showed (calibration)
 

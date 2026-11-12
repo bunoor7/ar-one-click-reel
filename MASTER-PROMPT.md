@@ -41,8 +41,9 @@ Read each file when its stage is reached. Do not load them all up front.
 | File | Read it for |
 |---|---|
 | `references/intake.md` | The creative brief: the card flow that collects subject, format, duration, dialect, tone, visual style, colors, fonts and voice. Read first, at the start of every project. |
+| `references/other-models.md` | Using other AI models through a connected model gateway: what to send, the protocol (identical briefs, independent answers, read the disagreement), limits, and what stays unverified. Read when a gateway is connected or the creator asks for second opinions. |
 | `references/free-tools.md` | Using the free allowances of web image and video tools through the browser: rules, the free-tier log, and planning around limits. Read at Stage 7 when the creator chooses free web tools. |
-| `references/delegation.md` | Handing routine work to the six cheaper helper agents (browser operator, web researcher, reviewer, prompt writer, production runner, sound sourcer): what to delegate, what never, how to brief, how to run several at once. Read before delegating anything. |
+| `references/delegation.md` | Handing routine work to the seven cheaper helper agents (browser operator, web researcher, model consultant, reviewer, prompt writer, production runner, sound sourcer): what to delegate, what never, how to brief, how to run several at once. Read before delegating anything. |
 | `references/content-and-integrity.md` | Narration language options, the content universe (categories A to L), editorial and factual integrity, special handling of Islamic subjects. Read at Stages 3 and 4. |
 | `references/storytelling.md` | Storytelling philosophy and the golden visual rule. Read at Stages 3 to 5. |
 | `references/art-direction.md` | Paper art direction, how people are built, paper-world immersion, Arabic typography and title legibility, composition, color and lighting, camera and format, creative originality. Read at Stages 5 to 8. |
@@ -1553,7 +1554,7 @@ Notes:
 
 If your assistant cannot start helper agents, ignore the helper names below and do the same tasks yourself with the same checklists.
 
-The plugin ships six helper agents (in the plugin's `agents/` folder). Each runs on a cheaper model than the main one. The main model plans, decides and approves. The helpers carry out routine, well-defined tasks and report back. You can start several at once.
+The plugin ships seven helper agents (in the plugin's `agents/` folder). Each runs on a cheaper model than the main one. The main model plans, decides and approves. The helpers carry out routine, well-defined tasks and report back. You can start several at once.
 
 **The principle: delegate execution, keep judgment.** A helper may run a script, fill a template, operate a website, or check a list. It may not decide what is true, what the creator approved, or whether a result is good enough.
 
@@ -1563,6 +1564,7 @@ The plugin ships six helper agents (in the plugin's `agents/` folder). Each runs
 |---|---|---|---|
 | `paper-browser-operator` | Sonnet | Running the finished English prompts on the creator's own signed-in websites in Chrome (Gemini, ChatGPT or another generator) and saving the images or videos | Writing or changing prompts, logging in, anything that costs money beyond the brief |
 | `paper-web-researcher` | Haiku | The long reading work of research: searches and reads pages, returns claims with source, quote, date and conflicts | Choosing which version is true, writing conclusions, quotations without a found source |
+| `paper-model-consultant` | Haiku | Sending one identical brief to other AI models through a connected model gateway, and saving each raw answer. For second opinions and routine text work on a free or cheaper model | Reading or deciding between the answers, sending private material, anything with no gateway connected |
 | `paper-reviewer` | Haiku | First-pass checking: Arabic titles against the approved wording, title contrast, images against the style and colors, timing, file lists, narration against the script. It cannot edit | Final approval, facts, anything it cannot open or measure |
 | `paper-prompt-writer` | Haiku | Filling the image-prompt templates for every scene of an approved storyboard | Designing scenes, changing Arabic wording |
 | `paper-production-runner` | Haiku | Running `timing.py`, `arabic_title.py`, `make_boards.py`, writing the manifest and running `assemble.py`, file and duration checks | Choosing fonts, colors, positions or durations, judging images |
@@ -1618,7 +1620,7 @@ Whatever came back, the rules of Stage 3 stay with the main model:
 - For Islamic history, the separation of Quranic accounts, authenticated hadith, established history and disputed narrations is applied by the main model, not delegated.
 - Do not accept a chat model's quotation or reference you cannot find. Chat models invent them.
 
-If the creator provides a plugin or connector that lets Claude call other models directly, use it for the same purpose: send the question with the same rules, save the answer as unverified, and verify before use. Never pass a model anything private from the project that it does not need.
+If the creator has a model gateway connected (for example the PAL MCP server), `paper-model-consultant` can put one identical brief to several models and save each answer. The protocol, the setup advice and the limits are in `other-models.md`. The answers are unverified leads. Never pass a model anything private from the project that it does not need.
 
 ## What a test showed (calibration)
 
@@ -1670,6 +1672,8 @@ Many image and video generators on the web give a free allowance: a few generati
 
 Free allowances change often and differ by country and account. **Never state a quota from memory.** Read what the site itself shows, and record it.
 
+A model gateway with the creator's own API keys (some providers give a free API allowance) is another way to use free allowances, for text work. See `other-models.md`.
+
 ## Rules
 
 - **The creator signs in, not the helper.** The helper never creates an account, never types a password, never solves a captcha. If a site needs sign-in, the creator does it in their own browser, then the helper continues.
@@ -1702,3 +1706,63 @@ Fill each column from the page. Write `not shown` when the page does not say. Th
 - A free model that cannot take reference images cannot keep a character consistent. Prefer one that can for any scene with a recurring character, or keep that character to the tool that holds the approved reference.
 - Some free tools choose the aspect ratio for you. If 9:16 is not offered, generate at the nearest ratio with generous margins and crop in the edit, and say so in the log.
 - Never pass a site anything private from the project beyond the prompt text.
+
+
+---
+
+# Using other AI models from inside Claude
+
+A model gateway lets Claude send the same question to other models (Gemini, GPT, local models and others) and read their answers in the same session. Use it to spend less of Claude's budget on routine text work, to use a free API allowance the creator already has, and to get a second opinion.
+
+The protocol below adapts ideas from the multi-model consult skill in the MIT-licensed repository `laurigates/claude-plugins` (its `multi-model-delegation` skill, which works through the PAL MCP server). Read that skill for the engineering details of PAL itself.
+
+## What this plugin does and does not ship
+
+- It ships **no gateway and no keys**. It does not register any MCP server for you. Installing a third-party server that runs on the creator's computer with the creator's API keys is the creator's own decision.
+- If the creator has a gateway connected (PAL or any other), the main model and the helper `paper-model-consultant` use it by the rules below.
+- If none is connected, skip this file. Use the browser route in `free-tools.md`, or do the work with Claude.
+
+## Setting up a gateway (for the creator, once)
+
+1. Read the server's source and its README first. It runs code locally and sees your keys. Pin a version instead of `@latest` when you can.
+2. Put API keys in your own environment variables or the server's own settings. **Never paste a key into a chat**, and never ask Claude to read a key file.
+3. Register the server, then check it with `claude mcp list`. The tool names are `mcp__<key>__<tool>`, where `<key>` is the name you registered it under.
+4. Some providers have a free API allowance with a personal key (Google AI Studio is one). Limits and terms change and differ by country: read them on the provider's page.
+
+In the example setup of `laurigates/claude-plugins`, the server is `uvx pal-mcp-server`, registered as `pal`, with keys such as `GEMINI_API_KEY` and `OPENAI_API_KEY` taken from the environment, and an optional local model endpoint. Treat that as an example, not a recommendation.
+
+## What to send, and what not
+
+**Good uses:**
+
+- Routine text work that does not need Claude: condensing a long source into notes, reformatting, translating the storyboard rows into English prompt drafts, listing candidate titles. The main model checks a sample of the result.
+- A **second opinion** on a script's dialect (is this phrase natural in Gulf or Bahraini speech?) or on a storyboard's clarity, from two models briefed identically.
+- Leads for research. Chat models without web access invent names, dates and quotations, so treat every answer as unverified.
+
+**Never:**
+
+- Send private material: the creator's personal details, unpublished work they have not agreed to share, anything about other people. Send only the text the task needs. Content that is already public, or that the creator has said can go, is fine.
+- Let a model decide facts, approve Arabic wording, or approve images. Those stay with the main model and the creator.
+- Pass a key, a password or a token in a prompt.
+
+## The protocol
+
+1. **Check that the gateway works.** List the models, then send one trivial request ("Reply with OK") to each model you intend to use. A provider can be listed as available with an empty or unexpanded key, and then fail on the first real call.
+2. **Brief every model with the identical prompt**, word for word. A different prompt creates differences that come from the wording, not from the problem. Pass long text as a file, not pasted into the prompt.
+3. **Keep the first round independent.** Never show one model another's answer.
+4. **Prefer models from different providers.** Two models from one provider tend to agree for the wrong reason. Under parallel calls the reported model name can be wrong, so identify the provider from the response's provider field when it exists.
+5. **Read the disagreement, not the average.** Where the models agree, they usually agree on what you would have written anyway. Where they split, you have found the decision that matters. Decide it against the approved material (the script, the storyboard, the sources), never by choosing the more confident model.
+6. **Graft, do not adopt.** Take the good parts. Say why you rejected the rest.
+7. **Verify before using.** Names, dates, numbers and quotations from any model go through the research rules of Stage 3: two independent reliable sources, or they are marked as unverified.
+8. **Tell the models not to ask for more.** Add to the brief: "Do not ask for searches or more files. State uncertainty inline." Otherwise some answers are only requests.
+
+## Limits and failures
+
+- **Usage limits.** A provider can stop with a rate or usage-limit error after a few large calls, for the whole key. Budget the calls before sending. When the limit message appears, stop using that provider until it resets and say so. Do not rotate or add keys to get around it.
+- **Large attachments** are capped, and the cap differs by model. If a file is too big for the smallest model, build one shorter excerpt file and send that same file to all, rather than trimming per model.
+- **An empty answer is not an agreement.** If a model returns nothing useful, record it as failed.
+- **A free allowance has conditions.** Check the provider's terms for what the output may be used for.
+
+## Images and video through a gateway
+
+A text gateway does not necessarily generate images or video. Check what the gateway you have actually offers. Image generation through an API usually needs a model and a key that support it, and a script that calls it. If the gateway does not offer it, use the connectors in `tools.md` or the browser route in `free-tools.md`.
