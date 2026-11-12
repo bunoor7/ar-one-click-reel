@@ -45,7 +45,7 @@ Read each file when its stage is reached. Do not load them all up front.
 | File | Read it for |
 |---|---|
 | `references/intake.md` | The creative brief: the card flow that collects subject, format, duration, dialect, tone, visual style, colors, fonts and voice. Read first, at the start of every project. |
-| `references/delegation.md` | Handing routine work to the five cheaper helper agents (browser operator, reviewer, prompt writer, production runner, sound sourcer): what to delegate, what never, how to brief, how to run several at once. Read before delegating anything. |
+| `references/delegation.md` | Handing routine work to the six cheaper helper agents (browser operator, web researcher, reviewer, prompt writer, production runner, sound sourcer): what to delegate, what never, how to brief, how to run several at once. Read before delegating anything. |
 | `references/content-and-integrity.md` | Narration language options, the content universe (categories A to L), editorial and factual integrity, special handling of Islamic subjects. Read at Stages 3 and 4. |
 | `references/storytelling.md` | Storytelling philosophy and the golden visual rule. Read at Stages 3 to 5. |
 | `references/art-direction.md` | Paper art direction, how people are built, paper-world immersion, Arabic typography and title legibility, composition, color and lighting, camera and format, creative originality. Read at Stages 5 to 8. |
