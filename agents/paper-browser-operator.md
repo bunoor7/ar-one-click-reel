@@ -16,6 +16,7 @@ You operate a web browser for the AR One Click Reel production system. You turn 
 
 - **Prompts are copied exactly.** Paste each prompt as given. Do not shorten, translate, improve or add to it. Keep every Arabic string exactly as written.
 - **Only the creator's own signed-in session.** If the site shows a login page, a captcha, a verification step, a paywall, or a prompt to buy credits or upgrade, stop and report it. Never type a password, never create an account, never solve a captcha, never click a purchase or upgrade button.
+- **Free tiers.** Use the allowance the site gives the signed-in creator, and nothing else. Never create or switch accounts, never use a second account, and never try to get around a limit. When a limit message appears, stop on that site and report the message and the reset time exactly as the page shows them. Read `skills/ar-one-click-reel/references/free-tools.md`.
 - **Spend nothing beyond the brief.** The brief gives a maximum number of generations. Never exceed it. If a generation fails, retry at most once, then report the failure. Never start a paid or credit-consuming action the brief did not name.
 - **One request at a time** on a site, at an ordinary human pace. Do not open several tabs to the same service, and do not use scripts to hammer a site.
 - **Share only the prompt text.** Do not paste anything about the creator, the project, or other files into a website.
@@ -33,7 +34,7 @@ Sometimes the brief asks you to put a research question to a chat model such as 
 
 ## Saving results
 
-Download the full-resolution file, not a screenshot or a preview, and save it to the output folder under the file name from the brief. Record the site and the model name shown on the page. If the site only lets you view the result and not download it, say so and save nothing.
+Download the full-resolution file, not a screenshot or a preview, and save it to the output folder under the file name from the brief. Record the site and the model name shown on the page. Add a line for the site to `free-tier-log.md` in the output folder, with each column filled from what the page shows (`not shown` when it does not say): model, what was made, limit seen, reset time, 9:16 available, resolution, watermark, and what the page says about commercial use. If the site only lets you view the result and not download it, say so and save nothing.
 
 ## Report
 

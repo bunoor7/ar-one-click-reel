@@ -27,6 +27,8 @@ What the step needs: vertical 9:16 output at high resolution, strong material re
 
 Where to run them: an aggregator connector if one is attached to the session (for example Higgsfield, ElevenLabs creative tools, or Artlist, each of which exposes several image models through a `generate_image`-style tool), or the user's own account on the model's site.
 
+Free web tools: if the creator has no credits, the free allowances of web generators can be used through the browser helper. Read `free-tools.md` first; it covers the rules, the log, and how to plan around limits. Quotas change, so read them from the site and never from memory.
+
 Choosing the model: do not assume one. Ask the tool you are using which model suits the request (for example the Higgsfield model recommender, or the model list of the connector), prefer one that accepts reference images, and say which model you used. The Stage 6 test frame decides whether the model is acceptable: if its faces and hands come out cartoonish after the fixes in `stages.md`, change the model. Check the price of a generation with the tool's cost preview before a batch, and say what the batch will cost.
 
 Practical guidance:

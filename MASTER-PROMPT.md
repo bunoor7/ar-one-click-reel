@@ -41,6 +41,7 @@ Read each file when its stage is reached. Do not load them all up front.
 | File | Read it for |
 |---|---|
 | `references/intake.md` | The creative brief: the card flow that collects subject, format, duration, dialect, tone, visual style, colors, fonts and voice. Read first, at the start of every project. |
+| `references/free-tools.md` | Using the free allowances of web image and video tools through the browser: rules, the free-tier log, and planning around limits. Read at Stage 7 when the creator chooses free web tools. |
 | `references/delegation.md` | Handing routine work to the six cheaper helper agents (browser operator, web researcher, reviewer, prompt writer, production runner, sound sourcer): what to delegate, what never, how to brief, how to run several at once. Read before delegating anything. |
 | `references/content-and-integrity.md` | Narration language options, the content universe (categories A to L), editorial and factual integrity, special handling of Islamic subjects. Read at Stages 3 and 4. |
 | `references/storytelling.md` | Storytelling philosophy and the golden visual rule. Read at Stages 3 to 5. |
@@ -957,6 +958,8 @@ Stop and wait for «التالي».
 
 ## Stage 7: Scene image prompts and generation
 
+**Step 0: Where to generate (a card).** Ask: «أين نولّد الصور؟» with these options: (1) the tools connected to this session, using their credits; (2) free web tools in the creator's browser, using their free allowances (see `free-tools.md`); (3) the creator generates by hand from the prompts file. For option 2, ask which sites the creator uses or will sign in to. Record the answer and use it for animation too.
+
 For every storyboard scene, write one production-ready image prompt in English using the scene template in `prompt-templates.md`. Each prompt must state:
 
 - Format and quality: vertical 9:16, highest quality, premium cinematic detail.
@@ -1357,6 +1360,8 @@ What the step needs: vertical 9:16 output at high resolution, strong material re
 
 Where to run them: an aggregator connector if one is attached to the session (for example Higgsfield, ElevenLabs creative tools, or Artlist, each of which exposes several image models through a `generate_image`-style tool), or the user's own account on the model's site.
 
+Free web tools: if the creator has no credits, the free allowances of web generators can be used through the browser helper. Read `free-tools.md` first; it covers the rules, the log, and how to plan around limits. Quotas change, so read them from the site and never from memory.
+
 Choosing the model: do not assume one. Ask the tool you are using which model suits the request (for example the Higgsfield model recommender, or the model list of the connector), prefer one that accepts reference images, and say which model you used. The Stage 6 test frame decides whether the model is acceptable: if its faces and hands come out cartoonish after the fixes in `stages.md`, change the model. Check the price of a generation with the tool's cost preview before a batch, and say what the batch will cost.
 
 Practical guidance:
@@ -1631,6 +1636,9 @@ A Haiku reviewer was given one scene image and two wordings, one correct and one
 
 ## Money and accounts
 
+Free tiers of web tools can carry much of the production. See `free-tools.md` for the rules (the creator signs in, one account per person, stop at the limit) and for planning around the allowances.
+
+
 - A helper never spends paid credits, buys, upgrades, or signs up. The brief states the tool and a maximum number of generations, and nothing more is allowed.
 - A failed paid generation is never repeated blindly. Look at the cause first.
 - The browser operator uses only sites the creator is already signed in to. It never types passwords and never solves captchas.
@@ -1652,3 +1660,45 @@ A Haiku reviewer was given one scene image and two wordings, one correct and one
 | 10 Editing | `paper-production-runner` | Timing, manifest, assembly and file checks |
 | 11 Quality control | `paper-reviewer` | Fill the checklist. The main model signs off |
 | Any time | `paper-reviewer` | Compare the conversation's outputs with what was approved, to save the main model's budget |
+
+
+---
+
+# Using free tiers of web tools
+
+Many image and video generators on the web give a free allowance: a few generations a day, or starter credits. The creator can use these to produce the video at little or no cost. This file is how to plan around them and what the limits are. The browser helper (`paper-browser-operator`) does the clicking; the main model does the planning.
+
+Free allowances change often and differ by country and account. **Never state a quota from memory.** Read what the site itself shows, and record it.
+
+## Rules
+
+- **The creator signs in, not the helper.** The helper never creates an account, never types a password, never solves a captcha. If a site needs sign-in, the creator does it in their own browser, then the helper continues.
+- **One account per person per service.** Never create several accounts, rotate accounts, use another person's account, or use any trick to get past a limit. That breaks the services' terms, gets accounts banned, and the creator loses the allowance for good.
+- **When the limit is reached, stop.** Report the limit message and the reset time the page shows. Move that work to another site, wait for the reset, or hand the prompts to the creator.
+- **Free results have conditions.** Check the page for: watermark, lower resolution, a queue or slow speed, and whether commercial use is allowed. Many free tiers forbid commercial use or require credit. If the video will be published or monetised, the creator decides, with those conditions in front of them. When in doubt, regenerate the final scenes on a tier whose terms allow the use.
+- **Automating a website can be against its terms.** The creator decides. Tell them once before the first browser run. Prefer a connector or official interface when one exists.
+
+## The free-tier log
+
+The helper keeps one file for the project, `free-tier-log.md`, with one line per site:
+
+```
+SITE | MODEL SHOWN | WHAT WAS MADE | LIMIT SEEN | RESETS | ASPECT 9:16? | RESOLUTION | WATERMARK | COMMERCIAL USE (as shown) 
+```
+
+Fill each column from the page. Write `not shown` when the page does not say. The main model reads this file before planning the next batch and never guesses.
+
+## Planning around free allowances
+
+1. **Ask where to generate** (the card at the start of Stage 7), and which sites the creator already uses or is willing to sign in to.
+2. **Do the important frames first**, on the best tool the creator has: the style test frame, then the hero scenes. Spend free allowance where the quality matters.
+3. **Spread the rest across sites** by what each one's page says is left. Keep a note of which scene was made where, since each tool has its own look. Mixing tools harms the unity of the style, so lean on the approved test frame as a reference, and regenerate any scene that clearly breaks the look.
+4. **Make clips short.** Free video generation is the scarcest. Prefer a single strong image per scene with the assembly and living-paper motion built in the edit (see the options in `tools.md`), and spend video allowance only on the scenes that need motion.
+5. **Use the text-free variant** on tools that cannot spell Arabic. Add the titles with `scripts/arabic_title.py`.
+6. **Order of fallback:** connector credits the creator already has, then free web tiers through the browser, then the creator running the prompts by hand from `prompts.md`.
+
+## Watch for
+
+- A free model that cannot take reference images cannot keep a character consistent. Prefer one that can for any scene with a recurring character, or keep that character to the tool that holds the approved reference.
+- Some free tools choose the aspect ratio for you. If 9:16 is not offered, generate at the nearest ratio with generous margins and crop in the edit, and say so in the log.
+- Never pass a site anything private from the project beyond the prompt text.

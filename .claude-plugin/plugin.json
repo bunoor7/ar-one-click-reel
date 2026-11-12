@@ -1,6 +1,6 @@
 {
   "name": "ar-one-click-reel",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "AR One Click Reel (سينما الورق): نظام إنتاج عربي يحوّل أي موضوع إلى فيديو سينمائي بتقنية الورق المقصوص والستوب موشن، من البحث والسكربت إلى الصور والصوت والتحريك والمونتاج. Arabic cinematic paper-cut stop-motion production system.",
   "author": { "name": "Bu Nasser" },
   "license": "MIT",

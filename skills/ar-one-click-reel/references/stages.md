@@ -162,6 +162,8 @@ Stop and wait for «التالي».
 
 ## Stage 7: Scene image prompts and generation
 
+**Step 0: Where to generate (a card).** Ask: «أين نولّد الصور؟» with these options: (1) the tools connected to this session, using their credits; (2) free web tools in the creator's browser, using their free allowances (see `free-tools.md`); (3) the creator generates by hand from the prompts file. For option 2, ask which sites the creator uses or will sign in to. Record the answer and use it for animation too.
+
 For every storyboard scene, write one production-ready image prompt in English using the scene template in `prompt-templates.md`. Each prompt must state:
 
 - Format and quality: vertical 9:16, highest quality, premium cinematic detail.

@@ -85,6 +85,9 @@ A Haiku reviewer was given one scene image and two wordings, one correct and one
 
 ## Money and accounts
 
+Free tiers of web tools can carry much of the production. See `free-tools.md` for the rules (the creator signs in, one account per person, stop at the limit) and for planning around the allowances.
+
+
 - A helper never spends paid credits, buys, upgrades, or signs up. The brief states the tool and a maximum number of generations, and nothing more is allowed.
 - A failed paid generation is never repeated blindly. Look at the cause first.
 - The browser operator uses only sites the creator is already signed in to. It never types passwords and never solves captchas.
