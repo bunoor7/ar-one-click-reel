@@ -140,6 +140,7 @@ skills/ar-one-click-reel/
   agents/                  المساعدون السبعة (نماذج أرخص للمهام الروتينية)
   assets/                  الخطوط (18) والألوان (12) والأساليب (6) ولوحاتها المرقّمة
   scripts/                 السكربتات المساعدة
+  animations/              مكتبة 47 أنيميشن بالكود (طبقات رسوم تُضاف في المونتاج) مع فهرس
 MASTER-PROMPT.md           النظام كله في ملف واحد (يُبنى بـ build_prompt.sh)
 ```
 
@@ -154,6 +155,12 @@ MASTER-PROMPT.md           النظام كله في ملف واحد (يُبنى 
 ```
 
 <div dir="rtl">
+
+## طبقات الرسوم بالكود (اختياري)
+
+مجلد [`animations`](skills/ar-one-click-reel/animations/) فيه 47 أنيميشن، كل واحد ملف HTML واحد مستقل بـcanvas 2D بلا مكتبات: عدّادات ورسوم بيانية وكرة أرضية بمسارات وخطوات وعناوين وخلفيات. [`INDEX.md`](skills/ar-one-click-reel/animations/INDEX.md) يحدد لكل واحد نوعه وفي أي لقطة ينفع ومع شنو يُركَّب وهل يصلح للعربي.
+
+تُستعمل طبقات مضافة في المونتاج فقط، لا بديلًا عن مشاهد الورق: [`code-animations.md`](skills/ar-one-click-reel/references/code-animations.md) فيه القواعد (لقطتان إلى ثلاث بالفيلم، الألوان والخط من الفيلم، لا تحريك للحرف العربي الواحد). التصدير إلى MP4 بـ`node skills/ar-one-click-reel/animations/_build/export.js` ويحتاج Node وPlaywright وffmpeg. جُرّب التصدير على أنيميشن واحد فقط، وكل الأنيميشنات فُحصت بلقطات.
 
 ## المساعدون (Subagents)
 

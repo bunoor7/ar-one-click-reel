@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phone Trio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#F6F4F1}body{display:flex;align-items:center;justify-content:center}canvas{display:block}</style>
+</head><body><canvas id="c"></canvas>
+<script>
+(function () {
+'use strict';
+// الألوان: غيّرها هنا فقط (الباقي يُشتق منها)
+const THEME = { ink: '#0B0B0C', bone: '#F6F4F1', white: '#FFFFFF', orange: '#FF5A1F' };
+// ===== الأساس المشترك: التوقيت، الإيزينغ، الألوان، الخطوط، دوال الرسم =====
+const W = 912, H = 600;
+let K = 1; // مقياس الشاشة الفعلي (يضبطه boot) ويلزم للظلال
+let FONTS_READY = false; // قبل تحميل الخطوط لا نخزّن أي نسيج مرسوم
+const clamp = (v, a = 0, b = 1) => (v < a ? a : v > b ? b : v);
+const lerp = (a, b, k) => a + (b - a) * k;
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+
+function bez(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const X = (u) => ((ax * u + bx) * u + cx) * u;
+  const Y = (u) => ((ay * u + by) * u + cy) * u;
+  return (x) => {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    let lo = 0, hi = 1, u = x;
+    for (let i = 0; i < 28; i++) { u = (lo + hi) / 2; if (X(u) < x) lo = u; else hi = u; }
+    return Y(u);
+  };
+}
+const EO = bez(0.16, 1, 0.3, 1);   // ease out
+const GL = bez(0.65, 0, 0.35, 1);  // glide
+const LD = bez(0.34, 1.56, 0.64, 1); // lands (تجاوز صغير)
+
+function hex2rgb(h) {
+  h = h.replace('#', '');
+  if (h.length === 3) h = h.split('').map((x) => x + x).join('');
+  const n = parseInt(h, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+const rgba = (h, a) => { const [r, g, b] = hex2rgb(h); return `rgba(${r},${g},${b},${a})`; };
+const mixHex = (a, b, k) => {
+  const A = hex2rgb(a), B = hex2rgb(b);
+  return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * k).toString(16).padStart(2, '0')).join('');
+};
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x6D2B79F5) >>> 0;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// ألوان مشتقة من الهوية (تتبدّل تلقائيًا إذا تغيّر THEME)
+const C = Object.assign({
+  peach: mixHex(THEME.orange, '#FFFFFF', 0.86),
+  light: mixHex(THEME.bone, '#FFFFFF', 0.6),
+  grey: mixHex(THEME.ink, THEME.bone, 0.55),
+  mid: mixHex(THEME.ink, THEME.bone, 0.78),
+  dark: mixHex(THEME.ink, '#FFFFFF', 0.09),
+}, THEME);
+
+const SANS = '"Google Sans","Product Sans","Helvetica Neue",Helvetica,Arial,sans-serif';
+const MONO = '"Google Sans Code","SF Mono",Menlo,Consolas,"Liberation Mono",monospace';
+const SERIF = '"Instrument Serif","Times New Roman",Georgia,serif';
+const F = {
+  sans: (s, w = 500) => `${w} ${s}px ${SANS}`,
+  mono: (s, w = 400) => `${w} ${s}px ${MONO}`,
+  serif: (s) => `italic 400 ${s}px ${SERIF}`,
+};
+
+// ---- نص (مع تباعد حروف يدوي لأنه أضمن بين المتصفحات) ----
+function textWidth(ctx, s, font, ls = 0) {
+  ctx.save(); ctx.font = font;
+  const w = ls ? [...s].reduce((a, ch) => a + ctx.measureText(ch).width, 0) + ls * (s.length - 1) : ctx.measureText(s).width;
+  ctx.restore(); return w;
+}
+function T(ctx, s, x, y, o = {}) {
+  ctx.save();
+  ctx.font = o.font || F.sans(20);
+  ctx.fillStyle = o.fill || C.ink;
+  ctx.textBaseline = o.base || 'alphabetic';
+  if (o.alpha != null) ctx.globalAlpha *= o.alpha;
+  const al = o.align || 'left', ls = o.ls || 0;
+  if (!ls) { ctx.textAlign = al; ctx.fillText(s, x, y); }
+  else {
+    const ws = [...s].map((ch) => ctx.measureText(ch).width);
+    const tot = ws.reduce((a, b) => a + b, 0) + ls * (ws.length - 1);
+    let px = al === 'center' ? x - tot / 2 : al === 'right' ? x - tot : x;
+    ctx.textAlign = 'left';
+    [...s].forEach((ch, i) => { ctx.fillText(ch, px, y); px += ws[i] + ls; });
+  }
+  ctx.restore();
+}
+// تسمية بحروف كبيرة صغيرة الحجم بخط الكود
+function CAPS(ctx, s, x, y, o = {}) {
+  T(ctx, s.toUpperCase(), x, y, Object.assign({ font: F.mono(o.size || 12, 500), fill: C.grey, ls: o.ls != null ? o.ls : 2 }, o));
+}
+
+
+// رقم بخانات ثابتة العرض: الأرقام لا تهتز عند تغيّر القيمة
+function NUM(ctx, str, x, y, o = {}) {
+  ctx.save();
+  ctx.font = o.font || F.sans(100, 700);
+  const slot = o.slot || ctx.measureText('0').width;
+  const ws = [...str].map((ch) => (/[0-9]/.test(ch) ? slot : ctx.measureText(ch).width));
+  const total = ws.reduce((a, b) => a + b, 0);
+  let px = o.align === 'center' ? x - total / 2 : o.align === 'right' ? x - total : x;
+  const x0 = px;
+  ctx.fillStyle = o.fill || C.ink; ctx.textBaseline = 'alphabetic';
+  [...str].forEach((ch, i) => {
+    if (/[0-9]/.test(ch)) { ctx.textAlign = 'center'; ctx.fillText(ch, px + slot / 2, y); }
+    else { ctx.textAlign = 'left'; ctx.fillText(ch, px, y); }
+    px += ws[i];
+  });
+  ctx.restore();
+  return { x: x0, w: total, slot };
+}
+
+// ---- أشكال ----
+function RR(ctx, x, y, w, h, r) {
+  r = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function circle(ctx, x, y, r, fill) { ctx.beginPath(); ctx.arc(x, y, Math.max(0, r), 0, Math.PI * 2); if (fill) { ctx.fillStyle = fill; ctx.fill(); } }
+const SH = (ctx, col, blur, ox = 0, oy = 0) => { ctx.shadowColor = col; ctx.shadowBlur = blur * K; ctx.shadowOffsetX = ox * K; ctx.shadowOffsetY = oy * K; };
+const noSH = (ctx) => { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0; };
+function glow(ctx, x, y, r, col, a = 0.5) {
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, rgba(col, a)); g.addColorStop(0.45, rgba(col, a * 0.35)); g.addColorStop(1, rgba(col, 0));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+}
+function floorShadow(ctx, cx, cy, rx, ry, a, col = '#000000') {
+  if (rx <= 0 || ry <= 0) return;
+  ctx.save(); ctx.translate(cx, cy); ctx.scale(1, ry / rx);
+  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+  g.addColorStop(0, rgba(col, a)); g.addColorStop(0.55, rgba(col, a * 0.5)); g.addColorStop(1, rgba(col, 0));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, rx, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+}
+
+// ---- خلفيات ----
+const fillBG = (ctx, col) => { ctx.fillStyle = col; ctx.fillRect(0, 0, W, H); };
+function dots(ctx, col, gap = 24, r = 1.3, a = 0.3) {
+  ctx.fillStyle = rgba(col, a); ctx.beginPath();
+  for (let y = gap / 2; y < H; y += gap) for (let x = gap / 2; x < W; x += gap) { ctx.moveTo(x + r, y); ctx.arc(x, y, r, 0, Math.PI * 2); }
+  ctx.fill();
+}
+function graphPaper(ctx, bg = C.bone, ink = C.ink) {
+  fillBG(ctx, bg);
+  ctx.lineWidth = 1;
+  for (let n = -40; n <= 40; n++) {
+    const strong = n % 4 === 0;
+    ctx.strokeStyle = rgba(ink, strong ? 0.13 : 0.06);
+    const x = Math.round(W / 2 + n * 24) + 0.5, y = Math.round(H / 2 + n * 24) + 0.5;
+    if (x >= 0 && x <= W) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    if (y >= 0 && y <= H) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  }
+}
+
+// ---- ثلاثي الأبعاد يدويًا: z يزداد بعيدًا عن الكاميرا ----
+const rotX = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c]; };
+const rotY = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c]; };
+const rotZ = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0] * c - p[1] * s, p[0] * s + p[1] * c, p[2]]; };
+function proj(p, cx, cy, D = 1000, sc = 1) {
+  const s = D / (D + p[2]);
+  return { x: cx + p[0] * s * sc, y: cy + p[1] * s * sc, s: s * sc, z: p[2] };
+}
+const deg = (d) => (d * Math.PI) / 180;
+
+// ---- منحنى ناعم (Catmull-Rom) ينقسم إلى عينات لرسمه تدريجيًا ----
+function catmull(pts, per = 24) {
+  const out = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+    for (let j = 0; j < per; j++) {
+      const u = j / per, u2 = u * u, u3 = u2 * u;
+      out.push([
+        0.5 * (2 * p1[0] + (-p0[0] + p2[0]) * u + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * u2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * u3),
+        0.5 * (2 * p1[1] + (-p0[1] + p2[1]) * u + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * u2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * u3),
+      ]);
+    }
+  }
+  out.push(pts[pts.length - 1]);
+  return out;
+}
+// يمسح مسارًا حتى نسبة frac من طوله ويعيد موضع الرأس
+function pathUpTo(poly, frac) {
+  const L = [0];
+  for (let i = 1; i < poly.length; i++) L.push(L[i - 1] + Math.hypot(poly[i][0] - poly[i - 1][0], poly[i][1] - poly[i - 1][1]));
+  const target = L[L.length - 1] * clamp(frac);
+  const pts = [poly[0]];
+  let head = poly[0];
+  for (let i = 1; i < poly.length; i++) {
+    if (L[i] <= target) { pts.push(poly[i]); head = poly[i]; }
+    else {
+      const k = (target - L[i - 1]) / (L[i] - L[i - 1] || 1);
+      head = [lerp(poly[i - 1][0], poly[i][0], k), lerp(poly[i - 1][1], poly[i][1], k)];
+      pts.push(head); break;
+    }
+  }
+  return { pts, head, total: L[L.length - 1] };
+}
+function strokePoly(ctx, pts) {
+  if (pts.length < 2) return;
+  ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  ctx.stroke();
+}
+function headDot(ctx, x, y, col = C.white, r = 5, glowCol = C.orange) {
+  glow(ctx, x, y, r * 4.5, glowCol, 0.55);
+  circle(ctx, x, y, r, col);
+}
+
+// ---- نسيج جاهز (canvas خارج الشاشة) يُرسم مرة واحدة بعد تحميل الخطوط ----
+const TEXC = {};
+function texture(key, w, h, paint, res = 2) {
+  if (TEXC[key]) return TEXC[key];
+  const cv = document.createElement('canvas');
+  cv.width = Math.round(w * res); cv.height = Math.round(h * res);
+  const g = cv.getContext('2d');
+  g.scale(res, res);
+  paint(g, w, h);
+  if (FONTS_READY) TEXC[key] = cv;
+  return cv;
+}
+
+// ---- تحميل الخطوط ثم التشغيل: t من 0 إلى 1 خلال ثانيتين، ثبات ثانية، ثم تكرار ----
+function boot(draw) {
+  const cv = document.getElementById('c');
+  const cx = cv.getContext('2d');
+  let last = 0;
+  function render(t) {
+    last = t;
+    cx.setTransform(1, 0, 0, 1, 0, 0);
+    cx.clearRect(0, 0, cv.width, cv.height);
+    cx.setTransform(K, 0, 0, K, 0, 0);
+    cx.save(); cx.beginPath(); cx.rect(0, 0, W, H); cx.clip();
+    try { draw(cx, t); } finally { cx.restore(); }
+  }
+  function fit() {
+    const dpr = window.devicePixelRatio || 1;
+    const s = Math.min(window.innerWidth / W, window.innerHeight / H);
+    const cw = Math.max(1, Math.floor(W * s));
+    cv.style.width = cw + 'px';
+    cv.style.height = Math.round(cw * H / W) + 'px';
+    cv.width = Math.round(cw * dpr);
+    K = cv.width / W;
+    cv.height = Math.round(H * K);
+    render(last);
+  }
+  window.__render = render;
+  window.addEventListener('resize', fit);
+  fit();
+  const q = new URLSearchParams(location.search);
+  function start() {
+    FONTS_READY = true;
+    window.__ready = true;
+    if (q.has('t')) { render(clamp(parseFloat(q.get('t')))); return; }
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { render(1); return; }
+    const t0 = performance.now();
+    (function loop(now) {
+      const e = (now - t0) % 3000; // ثانيتان تشغيل + ثانية ثبات
+      render(Math.min(e / 2000, 1));
+      requestAnimationFrame(loop);
+    })(t0);
+  }
+  const specs = ['400 20px "Google Sans"', '500 20px "Google Sans"', '700 20px "Google Sans"', '400 20px "Google Sans Code"', '500 20px "Google Sans Code"', 'italic 400 20px "Instrument Serif"'];
+  const loaded = document.fonts && document.fonts.load
+    ? Promise.race([Promise.all(specs.map((s) => document.fonts.load(s, 'Aa0123 .•'))), new Promise((r) => setTimeout(r, 4000))])
+    : Promise.resolve();
+  loaded.then(start, start);
+}
+
+// ===== خريطة نسيج على سطح بمنظور: تقسيمه لمثلثات صغيرة، كل مثلث بتحويل أفيني وقصّ =====
+function drawTri(ctx, img, x0, y0, x1, y1, x2, y2, sx0, sy0, sx1, sy1, sx2, sy2) {
+  const cx = (x0 + x1 + x2) / 3, cy = (y0 + y1 + y2) / 3, e = 0.6; // نوسّع المثلث قليلًا لإخفاء الخطوط بين المثلثات
+  const ex = (x, y) => { const dx = x - cx, dy = y - cy, l = Math.hypot(dx, dy) || 1; return [x + dx / l * e, y + dy / l * e]; };
+  const a = ex(x0, y0), b = ex(x1, y1), c = ex(x2, y2);
+  const dx0 = x0, dy0 = y0, dx1 = x1, dy1 = y1, dx2 = x2, dy2 = y2;
+  const delta = sx0 * sy1 + sy0 * sx2 + sx1 * sy2 - sy1 * sx2 - sy0 * sx1 - sx0 * sy2;
+  if (Math.abs(delta) < 1e-9) return;
+  const da = dx0 * sy1 + sy0 * dx2 + dx1 * sy2 - sy1 * dx2 - sy0 * dx1 - dx0 * sy2;
+  const db = sx0 * dx1 + dx0 * sx2 + sx1 * dx2 - dx1 * sx2 - dx0 * sx1 - sx0 * dx2;
+  const dc = sx0 * sy1 * dx2 + sy0 * dx1 * sx2 + dx0 * sx1 * sy2 - dx0 * sy1 * sx2 - sy0 * sx1 * dx2 - sx0 * dx1 * sy2;
+  const dd = dy0 * sy1 + sy0 * dy2 + dy1 * sy2 - sy1 * dy2 - sy0 * dy1 - dy0 * sy2;
+  const de = sx0 * dy1 + dy0 * sx2 + sx1 * dy2 - dy1 * sx2 - dy0 * sx1 - sx0 * dy2;
+  const df = sx0 * sy1 * dy2 + sy0 * dy1 * sx2 + dy0 * sx1 * sy2 - dy0 * sy1 * sx2 - sy0 * sx1 * dy2 - sx0 * dy1 * sy2;
+  ctx.save();
+  ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(c[0], c[1]); ctx.closePath(); ctx.clip();
+  ctx.transform(da / delta, dd / delta, db / delta, de / delta, dc / delta, df / delta);
+  ctx.drawImage(img, 0, 0);
+  ctx.restore();
+}
+// mapUV(u, v) يعيد نقطة الشاشة لإحداثيات النسيج 0..1
+function drawTex(ctx, img, mapUV, nx = 8, ny = 12) {
+  const iw = img.width, ih = img.height;
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+    const u0 = i / nx, u1 = (i + 1) / nx, v0 = j / ny, v1 = (j + 1) / ny;
+    const p00 = mapUV(u0, v0), p10 = mapUV(u1, v0), p11 = mapUV(u1, v1), p01 = mapUV(u0, v1);
+    drawTri(ctx, img, p00[0], p00[1], p10[0], p10[1], p11[0], p11[1], iw * u0, ih * v0, iw * u1, ih * v0, iw * u1, ih * v1);
+    drawTri(ctx, img, p00[0], p00[1], p11[0], p11[1], p01[0], p01[1], iw * u0, ih * v0, iw * u1, ih * v1, iw * u0, ih * v1);
+  }
+}
+// مستطيل مسطّح ثلاثي الأبعاد (بطاقة) بنسيج: يعيد الوجه الظاهر ونقاط الإطار
+function cardPoly(w, h, r, n = 10) {
+  const pts = [], cs = [[w / 2 - r, -h / 2 + r, -90], [w / 2 - r, h / 2 - r, 0], [-w / 2 + r, h / 2 - r, 90], [-w / 2 + r, -h / 2 + r, 180]];
+  cs.forEach(([cx, cy, a0]) => { for (let k = 0; k <= n; k++) { const a = deg(a0 + (k / n) * 90); pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } });
+  return pts;
+}
+
+// ===== جوال واقعي ثلاثي الأبعاد: شريحة بحافة معدنية مصقولة، إطار أسود رفيع، وأزرار جانبية =====
+// الشاشة تُرسم أولًا على canvas خارج الشاشة ثم تُسقط على وجه الجوال بمنظور (شبكة مثلثات صغيرة)
+const PH = { W: 250, H: 520, D: 26, R: 46, BZ: 9 };
+const PSW = PH.W - 2 * PH.BZ, PSH = PH.H - 2 * PH.BZ, PSR = PH.R - PH.BZ;
+const PH_LIGHT = (() => { const l = [-0.5, -0.55, -0.67], m = Math.hypot(...l); return l.map((x) => x / m); })();
+const PH_OUT = (() => {
+  const pts = [], ns = [], w = PH.W / 2, h = PH.H / 2, r = PH.R;
+  [[w - r, -h + r, -90], [w - r, h - r, 0], [-w + r, h - r, 90], [-w + r, -h + r, 180]].forEach(([cx, cy, a0]) => {
+    for (let k = 0; k <= 12; k++) { const a = deg(a0 + (k / 12) * 90); pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); ns.push([Math.cos(a), Math.sin(a)]); }
+  });
+  return { pts, ns };
+})();
+const PH_BTN = [[-1, -196, -168], [-1, -132, -74], [-1, -56, 2], [1, -128, -40]]; // الجانب، من y، إلى y
+
+function phoneRot(v, o) { return rotZ(rotX(rotY(v, o.yaw || 0), o.pitch || 0), o.roll || 0); }
+function phoneXf(p, o) { const q = phoneRot(p, o); return [q[0] + (o.x || 0), q[1] + (o.y || 0), q[2] + (o.z || 0)]; }
+
+// نسيج الشاشة بزوايا مدوّرة (الخارج شفاف)
+function screenTex(key, painter) {
+  return texture(key, PSW, PSH, (g, w, h) => { g.save(); RR(g, 0, 0, w, h, PSR); g.clip(); painter(g, w, h); g.restore(); });
+}
+function statusBar(g, w, dark) {
+  const fg = dark ? C.bone : C.ink;
+  T(g, '9:41', 28, 34, { font: F.sans(15, 700), fill: fg });
+  RR(g, w / 2 - 42, 13, 84, 26, 13); g.fillStyle = '#000'; g.fill();
+  for (let i = 0; i < 4; i++) { g.fillStyle = fg; g.fillRect(w - 76 + i * 5, 34 - (i + 1) * 3, 3, (i + 1) * 3); }
+  RR(g, w - 50, 22, 22, 11, 3.5); g.strokeStyle = fg; g.lineWidth = 1.2; g.stroke(); g.fillStyle = fg; g.fillRect(w - 48, 24, 15, 7);
+}
+
+function drawPhone(ctx, o) {
+  const sc = o.scale || 1, D = o.D || 1500;
+  const P = (q) => proj(q, o.cx, o.cy, D, sc);
+  const N = PH_OUT.pts.length, dz = PH.D / 2;
+  const T3 = (x, y, z) => P(phoneXf([x, y, z], o));
+  ctx.save(); ctx.globalAlpha *= o.alpha == null ? 1 : o.alpha;
+  const metal = (I) => mixHex('#33353b', '#eceef2', clamp(I));
+  const drawButtons = (side) => PH_BTN.forEach(([s, y0, y1]) => {
+    if (s !== side) return;
+    const x = s * (PH.W / 2), x2 = x + s * 4.5;
+    const q = [T3(x2, y0, -6), T3(x2, y1, -6), T3(x2, y1, 6), T3(x2, y0, 6)];
+    const nr = phoneRot([s, 0, 0], o), I = 0.25 + 0.75 * Math.max(0, nr[0] * PH_LIGHT[0] + nr[1] * PH_LIGHT[1] + nr[2] * PH_LIGHT[2]);
+    const f = [T3(x, y0, -6), T3(x2, y0, -6), T3(x2, y1, -6), T3(x, y1, -6)];
+    ctx.beginPath(); f.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y))); ctx.closePath(); ctx.fillStyle = metal(I * 0.8); ctx.fill();
+    ctx.beginPath(); q.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y))); ctx.closePath(); ctx.fillStyle = metal(I + 0.1); ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,0.45)'; ctx.lineWidth = 0.8; ctx.stroke();
+  });
+  // الأزرار على الجانب البعيد أولًا
+  [-1, 1].forEach((s) => { if (phoneRot([s, 0, 0], o)[2] >= 0) drawButtons(s); });
+  // الجدار الجانبي المعدني: ظل حسب اتجاه الوجه وتدرّج عبر السماكة
+  for (let i = 0; i < N; i++) {
+    const j = (i + 1) % N;
+    const n = [PH_OUT.ns[i][0] + PH_OUT.ns[j][0], PH_OUT.ns[i][1] + PH_OUT.ns[j][1], 0], m = Math.hypot(n[0], n[1]) || 1;
+    const nr = phoneRot([n[0] / m, n[1] / m, 0], o);
+    if (nr[2] >= 0) continue;
+    const a = PH_OUT.pts[i], b = PH_OUT.pts[j];
+    const fa = T3(a[0], a[1], -dz), fb = T3(b[0], b[1], -dz), bb = T3(b[0], b[1], dz), ba = T3(a[0], a[1], dz);
+    const I = 0.12 + 0.88 * Math.pow(Math.max(0, nr[0] * PH_LIGHT[0] + nr[1] * PH_LIGHT[1] + nr[2] * PH_LIGHT[2]), 0.8);
+    const g = ctx.createLinearGradient((fa.x + fb.x) / 2, (fa.y + fb.y) / 2, (ba.x + bb.x) / 2, (ba.y + bb.y) / 2);
+    g.addColorStop(0, mixHex(metal(I), '#FFFFFF', 0.28)); g.addColorStop(0.45, metal(I)); g.addColorStop(1, mixHex(metal(I), '#000000', 0.38));
+    ctx.beginPath(); ctx.moveTo(fa.x, fa.y); ctx.lineTo(fb.x, fb.y); ctx.lineTo(bb.x, bb.y); ctx.lineTo(ba.x, ba.y); ctx.closePath();
+    ctx.fillStyle = g; ctx.fill(); ctx.strokeStyle = g; ctx.lineWidth = 0.7; ctx.stroke();
+  }
+  [-1, 1].forEach((s) => { if (phoneRot([s, 0, 0], o)[2] < 0) drawButtons(s); });
+  // الوجه الأمامي: إطار أسود رفيع ثم الشاشة
+  ctx.beginPath(); PH_OUT.pts.forEach(([x, y], i) => { const q = T3(x, y, -dz); i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y); }); ctx.closePath();
+  ctx.fillStyle = '#050506'; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1; ctx.stroke();
+  if (o.tex) {
+    const map = (u, v) => { const q = T3((u - 0.5) * PSW, (v - 0.5) * PSH, -dz - 0.3); return [q.x, q.y]; };
+    drawTex(ctx, o.tex, map, 7, 13);
+    // انعكاس زجاجي خفيف
+    const c0 = map(0, 0), c1 = map(1, 1);
+    ctx.save(); ctx.beginPath();
+    for (let k = 0; k < 4; k++) for (let s = 0; s <= 6; s++) {
+      const a = deg(-90 + k * 90 + (s / 6) * 90), cxm = [PSW / 2 - PSR, PSW / 2 - PSR, -PSW / 2 + PSR, -PSW / 2 + PSR][k], cym = [-PSH / 2 + PSR, PSH / 2 - PSR, PSH / 2 - PSR, -PSH / 2 + PSR][k];
+      const q = T3(cxm + PSR * Math.cos(a), cym + PSR * Math.sin(a), -dz - 0.3); (k || s) ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y);
+    }
+    ctx.closePath(); ctx.clip();
+    const gl = ctx.createLinearGradient(c0[0], c0[1], c1[0], c1[1]);
+    gl.addColorStop(0, 'rgba(255,255,255,0.16)'); gl.addColorStop(0.35, 'rgba(255,255,255,0.0)'); gl.addColorStop(1, 'rgba(255,255,255,0.05)');
+    ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H); ctx.restore();
+  }
+  ctx.restore();
+}
+
+// ===== شاشات التطبيقات المشتركة =====
+function tabBar(g, w, h, dark) {
+  RR(g, 16, h - 76, w - 32, 58, 29); g.fillStyle = dark ? '#1b1b1f' : C.ink; g.fill();
+  for (let i = 0; i < 4; i++) circle(g, 16 + (w - 32) * (0.2 + i * 0.2), h - 47, i === 0 ? 6 : 4.5, i === 0 ? C.orange : rgba(C.bone, 0.6));
+}
+function appScreen(g, w, h, scroll, full) {
+  g.fillStyle = C.white; g.fillRect(0, 0, w, h);
+  g.save(); g.translate(0, -scroll);
+  T(g, 'Ideas that', 22, 94, { font: F.sans(32, 700), fill: C.ink });
+  T(g, 'compound.', 22, 140, { font: F.serif(48), fill: C.orange });
+  RR(g, 22, 162, w - 44, 124, 22); const gr = g.createLinearGradient(0, 162, w, 286); gr.addColorStop(0, mixHex(C.orange, '#FFFFFF', 0.25)); gr.addColorStop(1, C.orange); g.fillStyle = gr; g.fill();
+  circle(g, w / 2, 224, 26, C.white); g.fillStyle = C.orange; g.beginPath(); g.moveTo(w / 2 - 7, 211); g.lineTo(w / 2 + 14, 224); g.lineTo(w / 2 - 7, 237); g.closePath(); g.fill();
+  const tw = (w - 56) / 2;
+  RR(g, 22, 302, tw, 78, 18); g.fillStyle = C.bone; g.fill(); CAPS(g, 'REACH', 36, 328, { size: 10, ls: 1.6 }); T(g, '128k', 36, 364, { font: F.sans(26, 700), fill: C.ink });
+  RR(g, 34 + tw, 302, tw, 78, 18); g.fillStyle = C.ink; g.fill(); CAPS(g, 'GROWTH', 48 + tw, 328, { size: 10, ls: 1.6, fill: rgba(C.bone, 0.7) }); T(g, '+38%', 48 + tw, 364, { font: F.sans(26, 700), fill: C.orange });
+  if (full) {
+    T(g, 'Latest', 22, 424, { font: F.sans(22, 700), fill: C.ink });
+    ['#2B2B30', C.orange, C.grey, C.peach].forEach((col, i) => {
+      const y = 444 + i * 64; circle(g, 40, y + 22, 20, col);
+      RR(g, 72, y + 8, 110 - i * 14, 11, 5.5); g.fillStyle = C.ink; g.fill(); RR(g, 72, y + 28, 78, 9, 4.5); g.fillStyle = C.mid; g.fill();
+    });
+    RR(g, 22, 708, w - 44, 130, 26); g.fillStyle = C.ink; g.fill(); T(g, 'Next up', 42, 756, { font: F.sans(22, 700), fill: C.bone }); RR(g, 42, 776, 120, 9, 4.5); g.fillStyle = rgba(C.bone, 0.4); g.fill();
+    circle(g, w - 56, 773, 24, C.orange);
+  }
+  g.restore();
+  // خلفية شريط الحالة وتلاشي أسفل الصفحة حتى لا يظهر المحتوى المتمرر خلفهما
+  g.fillStyle = C.white; g.fillRect(0, 0, w, 52);
+  const fade = g.createLinearGradient(0, h - 108, 0, h - 70); fade.addColorStop(0, 'rgba(255,255,255,0)'); fade.addColorStop(1, 'rgba(255,255,255,1)');
+  g.fillStyle = fade; g.fillRect(0, h - 108, w, 108);
+  statusBar(g, w, false);
+  tabBar(g, w, h, false);
+}
+
+// ===== Phone Trio =====
+function feed(g, w, h) {
+  g.fillStyle = C.white; g.fillRect(0, 0, w, h);
+  T(g, 'Home', 22, 88, { font: F.sans(30, 700), fill: C.ink });
+  [C.orange, C.ink, C.grey, C.peach, C.mid].forEach((col, i) => { circle(g, 38 + i * 44, 128, 19, col); if (i === 0) { g.strokeStyle = C.orange; g.lineWidth = 2; g.beginPath(); g.arc(38, 128, 23, 0, 7); g.stroke(); } });
+  [[158, C.peach], [330, mixHex(C.orange, C.ink, 0.5)]].forEach(([y, col]) => {
+    circle(g, 36, y + 20, 14, C.ink); RR(g, 60, y + 12, 70, 8, 4); g.fillStyle = C.ink; g.fill();
+    RR(g, 22, y + 44, w - 44, 106, 18); g.fillStyle = col; g.fill();
+    RR(g, 22, y + 160, 120, 8, 4); g.fillStyle = C.mid; g.fill();
+  });
+  statusBar(g, w, false); tabBar(g, w, h, false);
+}
+function profile(g, w, h) {
+  g.fillStyle = C.white; g.fillRect(0, 0, w, h);
+  circle(g, w / 2, 112, 36, C.orange); circle(g, w / 2, 106, 12, C.white); g.fillStyle = C.white; g.beginPath(); g.ellipse(w / 2, 136, 20, 12, 0, Math.PI, 0); g.fill();
+  T(g, 'Bu Nasser', w / 2, 178, { font: F.sans(21, 700), fill: C.ink, align: 'center' });
+  [['248', 'POSTS'], ['12.4k', 'FOLLOWERS'], ['310', 'FOLLOWING']].forEach(([n, l], i) => { const x = 22 + (w - 44) * (i + 0.5) / 3; T(g, n, x, 214, { font: F.sans(19, 700), fill: C.ink, align: 'center' }); CAPS(g, l, x, 232, { align: 'center', size: 8, ls: 1 }); });
+  RR(g, 22, 248, w - 44, 38, 19); g.fillStyle = C.orange; g.fill(); T(g, 'Follow', w / 2, 273, { font: F.sans(16, 700), fill: C.white, align: 'center' });
+  const cols = [C.ink, C.peach, C.orange, C.grey, C.ink, C.mid, C.peach, C.orange, C.ink];
+  const cs = (w - 44 - 12) / 3;
+  cols.forEach((col, i) => { RR(g, 22 + (i % 3) * (cs + 6), 304 + Math.floor(i / 3) * (cs + 6), cs, cs, 8); g.fillStyle = col; g.fill(); });
+  statusBar(g, w, false); tabBar(g, w, h, false);
+}
+function analytics(g, w, h) {
+  g.fillStyle = '#101013'; g.fillRect(0, 0, w, h);
+  CAPS(g, 'ANALYTICS', 22, 86, { fill: C.bone, size: 11, ls: 2.4 });
+  T(g, '128.4k', 22, 138, { font: F.sans(42, 700), fill: C.bone });
+  const pts = [[22, 270], [60, 252], [96, 262], [132, 226], [168, 214], [210, 176]];
+  const cv = catmull(pts, 14); const gr = g.createLinearGradient(0, 170, 0, 290); gr.addColorStop(0, rgba(C.orange, 0.4)); gr.addColorStop(1, rgba(C.orange, 0));
+  g.beginPath(); g.moveTo(22, 290); cv.forEach((p) => g.lineTo(p[0], p[1])); g.lineTo(210, 290); g.closePath(); g.fillStyle = gr; g.fill();
+  g.strokeStyle = C.orange; g.lineWidth = 3; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); cv.forEach((p, i) => (i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]))); g.stroke(); circle(g, 210, 176, 5, C.white);
+  [0.4, 0.62, 0.5, 0.82, 0.58, 0.95, 0.7].forEach((v, i) => { RR(g, 24 + i * 29, 400 - v * 86, 18, v * 86, 5); g.fillStyle = i === 5 ? C.orange : rgba(C.bone, 0.28); g.fill(); });
+  statusBar(g, w, true); tabBar(g, w, h, true);
+}
+
+function draw(ctx, t) {
+  fillBG(ctx, C.bone);
+  dots(ctx, C.ink, 24, 1.1, 0.1);
+  const cx = W / 2, cy = H / 2 - 4, D = 1500, sc = 0.78;
+  const sway = Math.sin(t * Math.PI * 2) * deg(4.5);
+  const defs = [
+    { x: 0, z: -50, yaw: 0, tex: 'feed', paint: feed, at: 0.02 },
+    { x: -262, z: 90, yaw: deg(30), tex: 'prof', paint: profile, at: 0.14 },
+    { x: 262, z: 90, yaw: deg(-30), tex: 'ana', paint: analytics, at: 0.26 },
+  ];
+  const items = defs.map((d, i) => {
+    const p = EO(seg(t, d.at, d.at + 0.36));
+    const pos = rotY([d.x, 0, d.z], sway);
+    return { d, p, pos, i };
+  }).sort((a, b) => b.pos[2] - a.pos[2]);
+  for (const it of items) {
+    if (it.p <= 0) continue;
+    const float = Math.sin(t * Math.PI * 2 * 2 + it.i * 1.7) * 6 * clamp((t - 0.3) * 4);
+    const rise = (1 - it.p) * 140;
+    const base = proj([it.pos[0], 0, it.pos[2]], cx, cy, D, sc);
+    floorShadow(ctx, base.x, cy + 245 * base.s + 8, 118 * base.s, 14 * base.s, 0.26 * it.p);
+    drawPhone(ctx, { cx, cy, D, scale: sc, x: it.pos[0], z: it.pos[2], y: rise + float, yaw: it.d.yaw + sway, pitch: deg(-4), alpha: it.p, tex: screenTex(it.d.tex, it.d.paint) });
+  }
+}
+
+boot(draw);
+})();
+</script></body></html>
