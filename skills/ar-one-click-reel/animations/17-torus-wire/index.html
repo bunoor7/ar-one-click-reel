@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Torus Wire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#F6F4F1}body{display:flex;align-items:center;justify-content:center}canvas{display:block}</style>
+</head><body><canvas id="c"></canvas>
+<script>
+(function () {
+'use strict';
+// الألوان: غيّرها هنا فقط (الباقي يُشتق منها)
+const THEME = { ink: '#0B0B0C', bone: '#F6F4F1', white: '#FFFFFF', orange: '#FF5A1F' };
+// ===== الأساس المشترك: التوقيت، الإيزينغ، الألوان، الخطوط، دوال الرسم =====
+const W = 912, H = 600;
+let K = 1; // مقياس الشاشة الفعلي (يضبطه boot) ويلزم للظلال
+let FONTS_READY = false; // قبل تحميل الخطوط لا نخزّن أي نسيج مرسوم
+const clamp = (v, a = 0, b = 1) => (v < a ? a : v > b ? b : v);
+const lerp = (a, b, k) => a + (b - a) * k;
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+
+function bez(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const X = (u) => ((ax * u + bx) * u + cx) * u;
+  const Y = (u) => ((ay * u + by) * u + cy) * u;
+  return (x) => {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    let lo = 0, hi = 1, u = x;
+    for (let i = 0; i < 28; i++) { u = (lo + hi) / 2; if (X(u) < x) lo = u; else hi = u; }
+    return Y(u);
+  };
+}
+const EO = bez(0.16, 1, 0.3, 1);   // ease out
+const GL = bez(0.65, 0, 0.35, 1);  // glide
+const LD = bez(0.34, 1.56, 0.64, 1); // lands (تجاوز صغير)
+
+function hex2rgb(h) {
+  h = h.replace('#', '');
+  if (h.length === 3) h = h.split('').map((x) => x + x).join('');
+  const n = parseInt(h, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+const rgba = (h, a) => { const [r, g, b] = hex2rgb(h); return `rgba(${r},${g},${b},${a})`; };
+const mixHex = (a, b, k) => {
+  const A = hex2rgb(a), B = hex2rgb(b);
+  return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * k).toString(16).padStart(2, '0')).join('');
+};
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x6D2B79F5) >>> 0;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// ألوان مشتقة من الهوية (تتبدّل تلقائيًا إذا تغيّر THEME)
+const C = Object.assign({
+  peach: mixHex(THEME.orange, '#FFFFFF', 0.86),
+  light: mixHex(THEME.bone, '#FFFFFF', 0.6),
+  grey: mixHex(THEME.ink, THEME.bone, 0.55),
+  mid: mixHex(THEME.ink, THEME.bone, 0.78),
+  dark: mixHex(THEME.ink, '#FFFFFF', 0.09),
+}, THEME);
+
+const SANS = '"Google Sans","Product Sans","Helvetica Neue",Helvetica,Arial,sans-serif';
+const MONO = '"Google Sans Code","SF Mono",Menlo,Consolas,"Liberation Mono",monospace';
+const SERIF = '"Instrument Serif","Times New Roman",Georgia,serif';
+const F = {
+  sans: (s, w = 500) => `${w} ${s}px ${SANS}`,
+  mono: (s, w = 400) => `${w} ${s}px ${MONO}`,
+  serif: (s) => `italic 400 ${s}px ${SERIF}`,
+};
+
+// ---- نص (مع تباعد حروف يدوي لأنه أضمن بين المتصفحات) ----
+function textWidth(ctx, s, font, ls = 0) {
+  ctx.save(); ctx.font = font;
+  const w = ls ? [...s].reduce((a, ch) => a + ctx.measureText(ch).width, 0) + ls * (s.length - 1) : ctx.measureText(s).width;
+  ctx.restore(); return w;
+}
+function T(ctx, s, x, y, o = {}) {
+  ctx.save();
+  ctx.font = o.font || F.sans(20);
+  ctx.fillStyle = o.fill || C.ink;
+  ctx.textBaseline = o.base || 'alphabetic';
+  if (o.alpha != null) ctx.globalAlpha *= o.alpha;
+  const al = o.align || 'left', ls = o.ls || 0;
+  if (!ls) { ctx.textAlign = al; ctx.fillText(s, x, y); }
+  else {
+    const ws = [...s].map((ch) => ctx.measureText(ch).width);
+    const tot = ws.reduce((a, b) => a + b, 0) + ls * (ws.length - 1);
+    let px = al === 'center' ? x - tot / 2 : al === 'right' ? x - tot : x;
+    ctx.textAlign = 'left';
+    [...s].forEach((ch, i) => { ctx.fillText(ch, px, y); px += ws[i] + ls; });
+  }
+  ctx.restore();
+}
+// تسمية بحروف كبيرة صغيرة الحجم بخط الكود
+function CAPS(ctx, s, x, y, o = {}) {
+  T(ctx, s.toUpperCase(), x, y, Object.assign({ font: F.mono(o.size || 12, 500), fill: C.grey, ls: o.ls != null ? o.ls : 2 }, o));
+}
+
+
+// رقم بخانات ثابتة العرض: الأرقام لا تهتز عند تغيّر القيمة
+function NUM(ctx, str, x, y, o = {}) {
+  ctx.save();
+  ctx.font = o.font || F.sans(100, 700);
+  const slot = o.slot || ctx.measureText('0').width;
+  const ws = [...str].map((ch) => (/[0-9]/.test(ch) ? slot : ctx.measureText(ch).width));
+  const total = ws.reduce((a, b) => a + b, 0);
+  let px = o.align === 'center' ? x - total / 2 : o.align === 'right' ? x - total : x;
+  const x0 = px;
+  ctx.fillStyle = o.fill || C.ink; ctx.textBaseline = 'alphabetic';
+  [...str].forEach((ch, i) => {
+    if (/[0-9]/.test(ch)) { ctx.textAlign = 'center'; ctx.fillText(ch, px + slot / 2, y); }
+    else { ctx.textAlign = 'left'; ctx.fillText(ch, px, y); }
+    px += ws[i];
+  });
+  ctx.restore();
+  return { x: x0, w: total, slot };
+}
+
+// ---- أشكال ----
+function RR(ctx, x, y, w, h, r) {
+  r = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function circle(ctx, x, y, r, fill) { ctx.beginPath(); ctx.arc(x, y, Math.max(0, r), 0, Math.PI * 2); if (fill) { ctx.fillStyle = fill; ctx.fill(); } }
+const SH = (ctx, col, blur, ox = 0, oy = 0) => { ctx.shadowColor = col; ctx.shadowBlur = blur * K; ctx.shadowOffsetX = ox * K; ctx.shadowOffsetY = oy * K; };
+const noSH = (ctx) => { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0; };
+function glow(ctx, x, y, r, col, a = 0.5) {
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, rgba(col, a)); g.addColorStop(0.45, rgba(col, a * 0.35)); g.addColorStop(1, rgba(col, 0));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+}
+function floorShadow(ctx, cx, cy, rx, ry, a, col = '#000000') {
+  if (rx <= 0 || ry <= 0) return;
+  ctx.save(); ctx.translate(cx, cy); ctx.scale(1, ry / rx);
+  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+  g.addColorStop(0, rgba(col, a)); g.addColorStop(0.55, rgba(col, a * 0.5)); g.addColorStop(1, rgba(col, 0));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, rx, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+}
+
+// ---- خلفيات ----
+const fillBG = (ctx, col) => { ctx.fillStyle = col; ctx.fillRect(0, 0, W, H); };
+function dots(ctx, col, gap = 24, r = 1.3, a = 0.3) {
+  ctx.fillStyle = rgba(col, a); ctx.beginPath();
+  for (let y = gap / 2; y < H; y += gap) for (let x = gap / 2; x < W; x += gap) { ctx.moveTo(x + r, y); ctx.arc(x, y, r, 0, Math.PI * 2); }
+  ctx.fill();
+}
+function graphPaper(ctx, bg = C.bone, ink = C.ink) {
+  fillBG(ctx, bg);
+  ctx.lineWidth = 1;
+  for (let n = -40; n <= 40; n++) {
+    const strong = n % 4 === 0;
+    ctx.strokeStyle = rgba(ink, strong ? 0.13 : 0.06);
+    const x = Math.round(W / 2 + n * 24) + 0.5, y = Math.round(H / 2 + n * 24) + 0.5;
+    if (x >= 0 && x <= W) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    if (y >= 0 && y <= H) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  }
+}
+
+// ---- ثلاثي الأبعاد يدويًا: z يزداد بعيدًا عن الكاميرا ----
+const rotX = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c]; };
+const rotY = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c]; };
+const rotZ = (p, a) => { const c = Math.cos(a), s = Math.sin(a); return [p[0] * c - p[1] * s, p[0] * s + p[1] * c, p[2]]; };
+function proj(p, cx, cy, D = 1000, sc = 1) {
+  const s = D / (D + p[2]);
+  return { x: cx + p[0] * s * sc, y: cy + p[1] * s * sc, s: s * sc, z: p[2] };
+}
+const deg = (d) => (d * Math.PI) / 180;
+
+// ---- منحنى ناعم (Catmull-Rom) ينقسم إلى عينات لرسمه تدريجيًا ----
+function catmull(pts, per = 24) {
+  const out = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+    for (let j = 0; j < per; j++) {
+      const u = j / per, u2 = u * u, u3 = u2 * u;
+      out.push([
+        0.5 * (2 * p1[0] + (-p0[0] + p2[0]) * u + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * u2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * u3),
+        0.5 * (2 * p1[1] + (-p0[1] + p2[1]) * u + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * u2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * u3),
+      ]);
+    }
+  }
+  out.push(pts[pts.length - 1]);
+  return out;
+}
+// يمسح مسارًا حتى نسبة frac من طوله ويعيد موضع الرأس
+function pathUpTo(poly, frac) {
+  const L = [0];
+  for (let i = 1; i < poly.length; i++) L.push(L[i - 1] + Math.hypot(poly[i][0] - poly[i - 1][0], poly[i][1] - poly[i - 1][1]));
+  const target = L[L.length - 1] * clamp(frac);
+  const pts = [poly[0]];
+  let head = poly[0];
+  for (let i = 1; i < poly.length; i++) {
+    if (L[i] <= target) { pts.push(poly[i]); head = poly[i]; }
+    else {
+      const k = (target - L[i - 1]) / (L[i] - L[i - 1] || 1);
+      head = [lerp(poly[i - 1][0], poly[i][0], k), lerp(poly[i - 1][1], poly[i][1], k)];
+      pts.push(head); break;
+    }
+  }
+  return { pts, head, total: L[L.length - 1] };
+}
+function strokePoly(ctx, pts) {
+  if (pts.length < 2) return;
+  ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  ctx.stroke();
+}
+function headDot(ctx, x, y, col = C.white, r = 5, glowCol = C.orange) {
+  glow(ctx, x, y, r * 4.5, glowCol, 0.55);
+  circle(ctx, x, y, r, col);
+}
+
+// ---- نسيج جاهز (canvas خارج الشاشة) يُرسم مرة واحدة بعد تحميل الخطوط ----
+const TEXC = {};
+function texture(key, w, h, paint, res = 2) {
+  if (TEXC[key]) return TEXC[key];
+  const cv = document.createElement('canvas');
+  cv.width = Math.round(w * res); cv.height = Math.round(h * res);
+  const g = cv.getContext('2d');
+  g.scale(res, res);
+  paint(g, w, h);
+  if (FONTS_READY) TEXC[key] = cv;
+  return cv;
+}
+
+// ---- تحميل الخطوط ثم التشغيل: t من 0 إلى 1 خلال ثانيتين، ثبات ثانية، ثم تكرار ----
+function boot(draw) {
+  const cv = document.getElementById('c');
+  const cx = cv.getContext('2d');
+  let last = 0;
+  function render(t) {
+    last = t;
+    cx.setTransform(1, 0, 0, 1, 0, 0);
+    cx.clearRect(0, 0, cv.width, cv.height);
+    cx.setTransform(K, 0, 0, K, 0, 0);
+    cx.save(); cx.beginPath(); cx.rect(0, 0, W, H); cx.clip();
+    try { draw(cx, t); } finally { cx.restore(); }
+  }
+  function fit() {
+    const dpr = window.devicePixelRatio || 1;
+    const s = Math.min(window.innerWidth / W, window.innerHeight / H);
+    const cw = Math.max(1, Math.floor(W * s));
+    cv.style.width = cw + 'px';
+    cv.style.height = Math.round(cw * H / W) + 'px';
+    cv.width = Math.round(cw * dpr);
+    K = cv.width / W;
+    cv.height = Math.round(H * K);
+    render(last);
+  }
+  window.__render = render;
+  window.addEventListener('resize', fit);
+  fit();
+  const q = new URLSearchParams(location.search);
+  function start() {
+    FONTS_READY = true;
+    window.__ready = true;
+    if (q.has('t')) { render(clamp(parseFloat(q.get('t')))); return; }
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { render(1); return; }
+    const t0 = performance.now();
+    (function loop(now) {
+      const e = (now - t0) % 3000; // ثانيتان تشغيل + ثانية ثبات
+      render(Math.min(e / 2000, 1));
+      requestAnimationFrame(loop);
+    })(t0);
+  }
+  const specs = ['400 20px "Google Sans"', '500 20px "Google Sans"', '700 20px "Google Sans"', '400 20px "Google Sans Code"', '500 20px "Google Sans Code"', 'italic 400 20px "Instrument Serif"'];
+  const loaded = document.fonts && document.fonts.load
+    ? Promise.race([Promise.all(specs.map((s) => document.fonts.load(s, 'Aa0123 .•'))), new Promise((r) => setTimeout(r, 4000))])
+    : Promise.resolve();
+  loaded.then(start, start);
+}
+
+
+// ===== Torus Wire =====
+const MAJ = 176, MIN = 72, NT = 30, NP = 10;
+const tor = (th, ph) => { const q = MAJ + MIN * Math.cos(ph); return [q * Math.cos(th), MIN * Math.sin(ph), q * Math.sin(th)]; };
+
+function draw(ctx, t) {
+  fillBG(ctx, C.bone);
+  dots(ctx, C.ink, 24, 1.2, 0.16);
+  const sc = lerp(0.86, 1, EO(seg(t, 0, 0.5)));
+  const a = 0.5 + t * deg(100), b = deg(62) + t * deg(55);
+  const xf = (p) => rotX(rotY(p, a), b);
+  const P = (q) => proj(q, W / 2, H / 2, 1300, sc);
+  const ZM = MAJ + MIN;
+  const shade = (z) => lerp(0.92, 0.07, clamp((z / ZM + 1) / 2));
+
+  const segs = [];
+  for (let i = 0; i < NT; i++) {
+    const th = (i / NT) * Math.PI * 2;
+    let prev = xf(tor(th, 0));
+    for (let k = 1; k <= 48; k++) { const cur = xf(tor(th, (k / 48) * Math.PI * 2)); segs.push([prev, cur, (prev[2] + cur[2]) / 2]); prev = cur; }
+  }
+  for (let j = 0; j < NP; j++) {
+    const ph = (j / NP) * Math.PI * 2;
+    let prev = xf(tor(0, ph));
+    for (let k = 1; k <= 96; k++) { const cur = xf(tor((k / 96) * Math.PI * 2, ph)); segs.push([prev, cur, (prev[2] + cur[2]) / 2]); prev = cur; }
+  }
+  segs.sort((x, y) => y[2] - x[2]);
+  ctx.lineCap = 'round';
+  for (const [A, B, z] of segs) {
+    const pa = P(A), pb = P(B), al = shade(z);
+    ctx.strokeStyle = rgba(C.ink, al); ctx.lineWidth = lerp(0.6, 1.3, al);
+    ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
+  }
+
+  // حلقة مقطع برتقالية سميكة تدور حول الدونات وتحمل نقطة متوهجة
+  const tho = t * Math.PI * 2 + 0.6;
+  let prev = xf(tor(tho, 0));
+  for (let k = 1; k <= 72; k++) {
+    const cur = xf(tor(tho, (k / 72) * Math.PI * 2)), z = (prev[2] + cur[2]) / 2;
+    const pa = P(prev), pb = P(cur);
+    ctx.strokeStyle = rgba(C.orange, lerp(1, 0.28, clamp((z / ZM + 1) / 2))); ctx.lineWidth = 4.2;
+    ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
+    prev = cur;
+  }
+  const d = xf(tor(tho, t * Math.PI * 4 + 1)), pd = P(d);
+  glow(ctx, pd.x, pd.y, 30, C.orange, 0.65);
+  circle(ctx, pd.x, pd.y, 6.5 * pd.s, C.orange);
+  circle(ctx, pd.x, pd.y, 2.6 * pd.s, C.white);
+}
+
+boot(draw);
+})();
+</script></body></html>

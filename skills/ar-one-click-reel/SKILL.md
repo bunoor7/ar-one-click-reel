@@ -55,6 +55,7 @@ Read each file when its stage is reached. Do not load them all up front.
 | `references/animation-and-sound.md` | Animation philosophy, timing and narration sync, sound design. Read at Stages 9 and 10. |
 | `references/stages.md` | The full specification of every production stage. Read the section for the current stage before executing it. |
 | `references/prompt-templates.md` | English templates: character sheet, scene image, text-free scene, universal animation prompt. Read at Stages 6, 7 and 9. |
+| `references/code-animations.md` | Optional library of 47 code-built animation layers (counters, charts, maps, step flows, titles) added in the edit only for facts paper art cannot carry: where they fit, the rules, how to export. Read at Stage 10 when a shot needs one. |
 | `references/tools.md` | Which tool to use for images, voice, video, sound effects, music, fonts and assembly, and how to use the bundled scripts. Read before any generation or assembly step. |
 | `references/arabic-fonts.md` | The bundled Arabic fonts, their numbers, and which genre each suits. Read at the font card and at Stage 8. |
 
