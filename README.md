@@ -238,3 +238,7 @@ MIT للكود والنصوص. الخطوط المرفقة في `assets/fonts` �
 **AR One Click Reel** is an Arabic-first production system that turns any subject into a cinematic paper-cut stop-motion video. It ships as a Claude plugin (one skill with staged workflow, reference files and helper scripts) and as a single paste-anywhere prompt (`MASTER-PROMPT.md`).
 
 It runs eleven approval-gated stages: subject, format, research, Arabic script, storyboard, character references, scene images, Arabic text verification, animation, editing plan, and quality control. It is tool-agnostic for image, voice, video and sound generation, and includes scripts for scene timing, correctly shaped paper-cut Arabic titles (Pillow with Raqm/HarfBuzz), font download, and ffmpeg assembly.
+
+
+### الكاميرا المتصلة (اختياري)
+تجميع الفيلم كله بحركة كاميرا وحدة متصلة عبر عالم الورق بلا قطع ولا تلاشي، وكل مشهد مثبّت على سطره من التعليق. القواعد في [`continuous-camera.md`](skills/ar-one-click-reel/references/continuous-camera.md). مستلهم من برومبت «موشن فايبل 5.2» لعبدالله الفارس.
