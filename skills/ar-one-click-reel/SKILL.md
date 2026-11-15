@@ -74,12 +74,26 @@ Bundled scripts (run with `python3`, paths relative to this skill folder):
 - `scripts/arabic_title.py`: renders an exact, correctly shaped Arabic title as a paper-cut layer, onto an image or as a transparent PNG. It picks a readable color for the background and refuses a title that would be hard to read. It is the post-production fallback whenever a generator cannot render the Arabic correctly.
 - `scripts/assemble.py`: assembles the approved clips, narration, sound effects and music into the final 9:16 video with ffmpeg, from a JSON manifest.
 
-## 4. Production workflow
+## 4. Stage 0: model routing (first step of every project)
+
+Before the creative brief and before loading any reference file, plan which model does which part of the work, so the main model's budget is not spent on routine work. This step comes before every other stage.
+
+1. **Split the project into its tasks** and tell the creator the plan in one Arabic line, for example: «البحث عند paper-web-researcher (Haiku)، البرومبتات عند paper-prompt-writer (Haiku)، التجميع عند paper-production-runner (Haiku)، والسكربت والقرار والتدقيق العربي عندي».
+2. **Route by task type** (agents and their models are in `agents/`, the rules in `references/delegation.md`):
+   - **Haiku**: mechanical work with no taste involved. Research gathering, filling prompt templates, timing, titles, assembly, file and duration checks, first-pass review, sound sourcing.
+   - **Sonnet**: `paper-browser-operator`, running finished prompts in the creator's web tools.
+   - **The main model**: judgment, approvals, the Arabic script and narration, storyboard decisions, the first prompt that sets the pattern, and every Arabic text check. Never hand these to a smaller model, because Arabic accuracy drops.
+3. **The main model cannot switch itself.** If the whole request is light (re-running assembly, a file conversion, a timing fix on an approved film), say in one Arabic line at the top of the reply that Sonnet or Haiku is enough for it and suggest opening a session on the cheaper model, then continue the work without waiting unless the creator says stop.
+4. **Never suggest Fable to save cost**: it is priced above Opus.
+5. **A tiny task** (one command, one file read) the main model does itself, because opening a helper also costs.
+
+## 5. Production workflow
 
 Follow the stages in this exact order. Complete one stage at a time, then stop and wait for the user's reply. Proceed only when the user explicitly approves the current stage or types «التالي». If the user requests revisions, revise the current stage without moving forward.
 
 | # | Stage | Output |
 |---|---|---|
+| 0 | Model routing (section 4) | One-line plan of who does what |
 | 1-2 | Creative brief (cards, see `intake.md`) | Subject, format, duration, dialect, tone, visual style, colors, fonts, voice |
 | 3 | Research and story concept | Verified factual foundation and concept sheet |
 | 4 | Complete Arabic script | Numbered voiceover script with timing |
@@ -93,7 +107,7 @@ Follow the stages in this exact order. Complete one stage at a time, then stop a
 
 Full instructions for each stage are in `references/stages.md`.
 
-## 5. Strict interaction rules
+## 6. Strict interaction rules
 
 - Always work one stage at a time. Do not output the entire production process at once. Never skip ahead or combine stages without explicit user permission.
 - When the user types «التالي», proceed to the next stage only.
@@ -118,4 +132,4 @@ Always prioritize, in this order:
 
 The final goal is not merely to create beautiful images. It is to produce a coherent, engaging, visually distinctive Arabic cinematic experience.
 
-Begin with the creative brief (`references/intake.md`) only.
+Begin with Stage 0 (model routing), then the creative brief (`references/intake.md`) only.
