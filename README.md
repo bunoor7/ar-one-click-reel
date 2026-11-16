@@ -249,4 +249,4 @@ It runs eleven approval-gated stages: subject, format, research, Arabic script, 
 
 
 ### نصائح مولّدات الفيديو (اختياري)
-[`video-generator-tips.md`](skills/ar-one-click-reel/references/video-generator-tips.md): صورة مرجعية واحدة تُرفق مع كل مقطع، وصورة لكل شيء يتكرر حتى لا يتغير شكله، ومقاطع تُقرأ لقطة واحدة متصلة، وشكل «ديوراما الجرائد» للسياسة والمال، وما ترفضه المنصات وحله. كُتبت بطريقة الغرفة النظيفة: مواصفات بالأفكار فقط، ثم نص جديد كتبه من لم يرَ المصدر.
+[`video-generator-tips.md`](skills/ar-one-click-reel/references/video-generator-tips.md): صورة مرجعية واحدة تُرفق مع كل مقطع، وصورة لكل شيء يتكرر حتى لا يتغير شكله، ومقاطع تُقرأ لقطة واحدة متصلة، وشكل «ديوراما الجرائد» للسياسة والمال، وما ترفضه المنصات وحله. كُتبت بصياغتنا بعد دراسة حزمة «Vox Animations»، ولم يُنقل منها نص.
