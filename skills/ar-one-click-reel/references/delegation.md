@@ -2,7 +2,7 @@
 
 If your assistant cannot start helper agents, ignore the helper names below and do the same tasks yourself with the same checklists.
 
-The plugin ships seven helper agents (in the plugin's `agents/` folder). Each runs on a cheaper model than the main one. The main model plans, decides and approves. The helpers carry out routine, well-defined tasks and report back. You can start several at once.
+The plugin ships eight helper agents (in the plugin's `agents/` folder). Each runs on a cheaper model than the main one. The main model plans, decides and approves. The helpers carry out routine, well-defined tasks and report back. You can start several at once.
 
 **The principle: delegate execution, keep judgment.** A helper may run a script, fill a template, operate a website, or check a list. It may not decide what is true, what the creator approved, or whether a result is good enough.
 
@@ -16,6 +16,7 @@ The plugin ships seven helper agents (in the plugin's `agents/` folder). Each ru
 | `paper-reviewer` | Haiku | First-pass checking: Arabic titles against the approved wording, title contrast, images against the style and colors, timing, file lists, narration against the script. It cannot edit | Final approval, facts, anything it cannot open or measure |
 | `paper-prompt-writer` | Haiku | Filling the image-prompt templates for every scene of an approved storyboard | Designing scenes, changing Arabic wording |
 | `paper-production-runner` | Haiku | Running `timing.py`, `arabic_title.py`, `make_boards.py`, writing the manifest and running `assemble.py`, file and duration checks | Choosing fonts, colors, positions or durations, judging images |
+| `paper-motion-director` | Sonnet | Planning each scene's paper motion from the library index: which words get a motion beat, which paper action matches the meaning, transitions and the few code layers, varied across the film. Returns a timed plan and lists gaps | Writing final prompts, generating, rendering, deciding gaps |
 | `paper-sound-sourcer` | Haiku | Finding licensed paper sound effects and music, with a credits file | Mixing, final sound design, anything with an unclear licence |
 
 ## What stays with the main model

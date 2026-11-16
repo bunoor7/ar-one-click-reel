@@ -1,0 +1,406 @@
+{
+ "catalog": [
+  {
+   "key": "scene-motion",
+   "label": "Motion inside a paper scene",
+   "question": "How do the paper pieces of this scene move?",
+   "entries": [
+    {
+     "name": "Universal animation prompt",
+     "gives": "Back-to-front paper assembly (first 70%), then a living-paper hold (last 30%), locked camera",
+     "when": "Every generated scene clip",
+     "where": "skills/ar-one-click-reel/references/prompt-templates.md §6, §7"
+    },
+    {
+     "name": "Living-paper-only prompt",
+     "gives": "Tiny ambient motion on a finished image",
+     "when": "Extending a hold, start-frame-only tools",
+     "where": "skills/ar-one-click-reel/references/prompt-templates.md §8"
+    },
+    {
+     "name": "Animation philosophy",
+     "gives": "Stop-motion on twos, real cardstock thickness, contact shadows, no CGI morphing",
+     "when": "Before writing any animation prompt",
+     "where": "skills/ar-one-click-reel/references/animation-and-sound.md"
+    },
+    {
+     "name": "Generated-clip consistency",
+     "gives": "One look image for every clip, recurring props with their own picture, clips that join into one shot",
+     "when": "Scenes generated as video",
+     "where": "skills/ar-one-click-reel/references/video-generator-tips.md"
+    }
+   ]
+  },
+  {
+   "key": "camera",
+   "label": "Camera",
+   "question": "Does the camera move, and how?",
+   "entries": [
+    {
+     "name": "Locked camera (default)",
+     "gives": "Clips keep the camera still; motion lives in the paper",
+     "when": "Default for every scene",
+     "where": "skills/ar-one-click-reel/references/prompt-templates.md §6"
+    },
+    {
+     "name": "Continuous camera (optional)",
+     "gives": "The whole film as one camera move through the paper world, each scene pinned to its line",
+     "when": "When chosen at the intake",
+     "where": "skills/ar-one-click-reel/references/continuous-camera.md"
+    },
+    {
+     "name": "Camera look",
+     "gives": "Cinema camera, macro or prime lens, shallow depth of field",
+     "when": "Image prompts",
+     "where": "skills/ar-one-click-reel/references/art-direction.md (Camera and image format)"
+    }
+   ]
+  },
+  {
+   "key": "code-layers",
+   "label": "Code-built layers in the edit",
+   "question": "Does a fact need a layer the paper cannot carry?",
+   "entries": [
+    {
+     "name": "47 code animations",
+     "gives": "Count-up, donut ring, line draw, 3D bars, globe arcs, flow line, paper collage, marker draw, halftone wave, dot wipe…",
+     "when": "Two or three per film at most, for numbers, routes, steps, emphasis",
+     "where": "skills/ar-one-click-reel/references/code-animations.md and animations/INDEX.md"
+    }
+   ]
+  },
+  {
+   "key": "transitions",
+   "label": "Transitions between acts",
+   "question": "How do we move from one act to the next?",
+   "entries": [
+    {
+     "name": "Printed transitions",
+     "gives": "32-halftone-wave, 36-dot-wipe",
+     "when": "Between acts",
+     "where": "skills/ar-one-click-reel/references/code-animations.md"
+    },
+    {
+     "name": "Motion-blur joins",
+     "gives": "Clips that start and end in motion blur read as one shot",
+     "when": "Generated clips",
+     "where": "skills/ar-one-click-reel/references/video-generator-tips.md"
+    },
+    {
+     "name": "Continuous camera",
+     "gives": "No cuts at all",
+     "when": "One-shot films",
+     "where": "skills/ar-one-click-reel/references/continuous-camera.md"
+    }
+   ]
+  },
+  {
+   "key": "titles-fonts",
+   "label": "Arabic titles and fonts",
+   "question": "How does Arabic text appear?",
+   "entries": [
+    {
+     "name": "Arabic titles",
+     "gives": "Shaped correctly, contrast-checked, added as a still layer in the edit, never animated letter by letter",
+     "when": "Every title",
+     "where": "skills/ar-one-click-reel/scripts/arabic_title.py and skills/ar-one-click-reel/references/art-direction.md (Arabic typography)"
+    },
+    {
+     "name": "Bundled fonts",
+     "gives": "Numbered fonts and their genres",
+     "when": "Font card and Stage 8",
+     "where": "skills/ar-one-click-reel/references/arabic-fonts.md"
+    }
+   ]
+  },
+  {
+   "key": "look",
+   "label": "Look of the film",
+   "question": "Which paper look and palette?",
+   "entries": [
+    {
+     "name": "Styles and palettes",
+     "gives": "Numbered style and palette boards",
+     "when": "Intake",
+     "where": "skills/ar-one-click-reel/assets/styles.json, palettes.json"
+    },
+    {
+     "name": "Newsprint diorama",
+     "gives": "Sepia newsprint world, eye bars, one accent prop",
+     "when": "Politics, money, power",
+     "where": "skills/ar-one-click-reel/references/video-generator-tips.md §3"
+    },
+    {
+     "name": "Breaking the safe pick",
+     "gives": "Name the default, then move away from it",
+     "when": "Any open creative choice",
+     "where": "skills/ar-one-click-reel/references/antialgorithm.md"
+    }
+   ]
+  },
+  {
+   "key": "sound",
+   "label": "Sound",
+   "question": "What does it sound like?",
+   "entries": [
+    {
+     "name": "Sound design",
+     "gives": "Tactile paper sounds, narration sync",
+     "when": "Stages 9 and 10",
+     "where": "skills/ar-one-click-reel/references/animation-and-sound.md (Sound design)"
+    },
+    {
+     "name": "Sound sourcing",
+     "gives": "Licensed paper effects and music with credits",
+     "when": "When effects are needed",
+     "where": "agents/paper-sound-sourcer.md"
+    }
+   ]
+  }
+ ],
+ "motion_vocabulary": [
+  {
+   "family": "Length, extension",
+   "cues": "طويل، يمتد، بعيد، سنين، مسافة",
+   "idea": "A paper strip or accordion fold extends across the frame with the word",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "an accordion paper strip unfolds piece by piece, or a paper ribbon unrolls"
+    },
+    {
+     "source": "Code layer",
+     "how": "13-line-draw or 15-marker-draw under the still title"
+    }
+   ]
+  },
+  {
+   "family": "Shortness, shrinking",
+   "cues": "قصير، صغير، يتقلص، قليل",
+   "idea": "A piece folds in on itself",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "the paper folds closed into a small square"
+    }
+   ]
+  },
+  {
+   "family": "Weight, importance",
+   "cues": "ثقيل، أهم، خطير، ضخم",
+   "idea": "The main piece drops last and settles with a heavy stepped bounce and a deep contact shadow",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "drop and settle on twos"
+    }
+   ]
+  },
+  {
+   "family": "Fall, collapse",
+   "cues": "سقط، انهار، خسارة، تراجع",
+   "idea": "A paper piece tips and falls, layers slump",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "a cut-out topples off its stand"
+    },
+    {
+     "source": "Code layer",
+     "how": "28-3d-bars collapsing, data from Stage 3"
+    }
+   ]
+  },
+  {
+   "family": "Rise, growth",
+   "cues": "ارتفع، صعد، نما، زاد",
+   "idea": "A pop-up lifts on its paper tab, a paper plant unfolds upward",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "pop-up lift"
+    },
+    {
+     "source": "Code layer",
+     "how": "40-count-up"
+    }
+   ]
+  },
+  {
+   "family": "Joining, unity",
+   "cues": "اجتمع، اتحد، معًا، يكمّل",
+   "idea": "Torn pieces slide together into one shape",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "torn halves meet and the seam closes"
+    },
+    {
+     "source": "Code layer",
+     "how": "06-paper-collage"
+    }
+   ]
+  },
+  {
+   "family": "Splitting, division",
+   "cues": "انقسم، تفرّق، خلاف، تفكك",
+   "idea": "A sheet tears in two and the halves drift apart",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "a visible paper tear"
+    }
+   ]
+  },
+  {
+   "family": "Shock, surprise",
+   "cues": "صدمة، فجأة، ضربة",
+   "idea": "A stamp slams onto paper, or a sheet crumples",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "stamp punch with paper dust"
+    },
+    {
+     "source": "Generated clip",
+     "how": "strong beat about every 3 s (video-generator-tips §2)"
+    }
+   ]
+  },
+  {
+   "family": "Speed",
+   "cues": "سريع، فورًا، بلحظة",
+   "idea": "Pieces snap in fast, fewer poses",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "quick snaps on ones for that moment only"
+    }
+   ]
+  },
+  {
+   "family": "Slowness, waiting",
+   "cues": "ببطء، انتظر، صبر، هدوء",
+   "idea": "A long living-paper hold, tiny motion only",
+   "options": [
+    {
+     "source": "Living-paper prompt",
+     "how": "prompt-templates §8"
+    }
+   ]
+  },
+  {
+   "family": "Reveal, secret",
+   "cues": "كشف، الحقيقة، سر، مخفي",
+   "idea": "A paper flap lifts or a fold opens to show what is under it",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "flap lift"
+    }
+   ]
+  },
+  {
+   "family": "Before and after",
+   "cues": "قبل، بعد، كان، صار",
+   "idea": "A page turns from one state to the other",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "page turn"
+    },
+    {
+     "source": "Code layer",
+     "how": "20-before-after"
+    }
+   ]
+  },
+  {
+   "family": "Many, spread",
+   "cues": "كثير، الكل، العالم، انتشر",
+   "idea": "Cut-outs multiply in rows",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "rows of identical cut-outs fill in"
+    },
+    {
+     "source": "Code layer",
+     "how": "03-globe-arcs"
+    }
+   ]
+  },
+  {
+   "family": "Path, steps",
+   "cues": "طريق، مسار، خطوة، ثم",
+   "idea": "A paper string or a dotted route draws across a paper map",
+   "options": [
+    {
+     "source": "Code layer",
+     "how": "42-flow-line"
+    },
+    {
+     "source": "Assembly beat",
+     "how": "stepping-stone pieces placed one by one"
+    }
+   ]
+  },
+  {
+   "family": "Depth, layers",
+   "cues": "داخل، طبقات، نظام، تحت",
+   "idea": "Layers separate in depth with parallax",
+   "options": [
+    {
+     "source": "Continuous camera",
+     "how": "a slow push between layers (continuous-camera.md)"
+    }
+   ]
+  },
+  {
+   "family": "Time, history",
+   "cues": "قديم، تاريخ، زمان",
+   "idea": "Aged or burnt paper edges, newsprint",
+   "options": [
+    {
+     "source": "Look",
+     "how": "newsprint diorama (video-generator-tips §3)"
+    }
+   ]
+  },
+  {
+   "family": "End, stop",
+   "cues": "انتهى، خلاص، آخر",
+   "idea": "The scene folds shut like a book",
+   "options": [
+    {
+     "source": "Assembly beat",
+     "how": "fold closed"
+    },
+    {
+     "source": "Transition",
+     "how": "36-dot-wipe"
+    }
+   ]
+  },
+  {
+   "family": "Numbers",
+   "cues": "رقم، مليون، نسبة، %",
+   "idea": "The number is a code layer over the paper, data from Stage 3",
+   "options": [
+    {
+     "source": "Code layer",
+     "how": "40-count-up, 23-donut-ring, 28-3d-bars"
+    }
+   ]
+  }
+ ],
+ "rules": [
+  "Arabic text never moves: titles are still layers added in the edit (arabic_title.py). Never letter-by-letter. Animations 01, 07, 10 and 33 move single letters and are not used on Arabic.",
+  "Paper stays paper: no morphing, melting or CGI-smooth motion; stop-motion on twos; real thickness and contact shadows.",
+  "The camera is locked by default; it moves only in the continuous-camera option.",
+  "Code layers: two or three per film at most, one per shot; colours and fonts from the film.",
+  "Quoted verses and hadith never move; no music under them; nothing playful on serious or religious topics.",
+  "Never show a prophet or companion in any form (content-and-integrity.md).",
+  "Vary: never the same motion family on two consecutive scenes; keep one hero motion for the strongest moment."
+ ]
+}
