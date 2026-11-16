@@ -242,3 +242,7 @@ It runs eleven approval-gated stages: subject, format, research, Arabic script, 
 
 ### الكاميرا المتصلة (اختياري)
 تجميع الفيلم كله بحركة كاميرا وحدة متصلة عبر عالم الورق بلا قطع ولا تلاشي، وكل مشهد مثبّت على سطره من التعليق. القواعد في [`continuous-camera.md`](skills/ar-one-click-reel/references/continuous-camera.md). مستلهم من برومبت «موشن فايبل 5.2» لعبدالله الفارس.
+
+
+### كسر الخيار المتوقع (اختياري)
+قواعد [`antialgorithm.md`](skills/ar-one-click-reel/references/antialgorithm.md) من mankidev/antialgorithm (MIT): يسمّي الخيار الافتراضي في الزاوية والهوك والتكوين ثم يبتعد عنه بسبب من الموضوع. ألوان الفيلم وخطه ثابتة، ولا يُهز النص العربي.

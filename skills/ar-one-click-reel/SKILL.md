@@ -57,6 +57,7 @@ Read each file when its stage is reached. Do not load them all up front.
 | `references/prompt-templates.md` | English templates: character sheet, scene image, text-free scene, universal animation prompt. Read at Stages 6, 7 and 9. |
 | `references/code-animations.md` | Optional library of 47 code-built animation layers (counters, charts, maps, step flows, titles) added in the edit only for facts paper art cannot carry: where they fit, the rules, how to export. Read at Stage 10 when a shot needs one. |
 | `references/continuous-camera.md` | Optional one-shot assembly: the whole film as one continuous camera move through the paper world, no cuts or crossfades, each scene pinned to its narration line. Read at the intake if offered, at Stage 5 for the move table, and at Stage 10 to build. |
+| `references/antialgorithm.md` | Breaking the safe, average first pick for open creative choices (angle, hook, metaphor, title, composition, cover), with its seed, rough and check scripts. Read at Stages 4 and 5 and whenever the creator says the result looks generic. |
 | `references/tools.md` | Which tool to use for images, voice, video, sound effects, music, fonts and assembly, and how to use the bundled scripts. Read before any generation or assembly step. |
 | `references/arabic-fonts.md` | The bundled Arabic fonts, their numbers, and which genre each suits. Read at the font card and at Stage 8. |
 
