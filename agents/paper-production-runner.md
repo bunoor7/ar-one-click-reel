@@ -1,6 +1,6 @@
 ---
 name: paper-production-runner
-description: Runs the mechanical production scripts for the paper-cut project: scene timing from the script, Arabic paper-cut titles for every scene, the numbered boards, the assembly manifest and the ffmpeg assembly, plus file and duration checks. Use for repetitive batch work after wording, fonts and colors are approved. It runs the bundled scripts exactly as documented and reports results. It does not change approved wording, fonts, colors or timing decisions.
+description: "Runs the mechanical production scripts for the paper-cut project: scene timing from the script, Arabic paper-cut titles for every scene, the numbered boards, the assembly manifest and the ffmpeg assembly, plus file and duration checks. Use for repetitive batch work after wording, fonts and colors are approved. It runs the bundled scripts exactly as documented and reports results. It does not change approved wording, fonts, colors or timing decisions."
 model: haiku
 tools: Read, Write, Edit, Bash, Glob, Grep
 color: blue

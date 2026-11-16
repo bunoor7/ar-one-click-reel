@@ -246,3 +246,7 @@ It runs eleven approval-gated stages: subject, format, research, Arabic script, 
 
 ### كسر الخيار المتوقع (اختياري)
 قواعد [`antialgorithm.md`](skills/ar-one-click-reel/references/antialgorithm.md) من mankidev/antialgorithm (MIT): يسمّي الخيار الافتراضي في الزاوية والهوك والتكوين ثم يبتعد عنه بسبب من الموضوع. ألوان الفيلم وخطه ثابتة، ولا يُهز النص العربي.
+
+
+### نصائح مولّدات الفيديو (اختياري)
+[`video-generator-tips.md`](skills/ar-one-click-reel/references/video-generator-tips.md): صورة مرجعية واحدة تُرفق مع كل مقطع، وصورة لكل شيء يتكرر حتى لا يتغير شكله، ومقاطع تُقرأ لقطة واحدة متصلة، وشكل «ديوراما الجرائد» للسياسة والمال، وما ترفضه المنصات وحله. كُتبت بصياغتنا بعد دراسة حزمة «Vox Animations»، ولم يُنقل منها نص.
