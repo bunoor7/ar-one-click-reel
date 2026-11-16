@@ -250,3 +250,7 @@ It runs eleven approval-gated stages: subject, format, research, Arabic script, 
 
 ### نصائح مولّدات الفيديو (اختياري)
 [`video-generator-tips.md`](skills/ar-one-click-reel/references/video-generator-tips.md): صورة مرجعية واحدة تُرفق مع كل مقطع، وصورة لكل شيء يتكرر حتى لا يتغير شكله، ومقاطع تُقرأ لقطة واحدة متصلة، وشكل «ديوراما الجرائد» للسياسة والمال، وما ترفضه المنصات وحله. كُتبت بصياغتنا بعد دراسة حزمة «Vox Animations»، ولم يُنقل منها نص.
+
+
+### الفهرس الذكي ومخرج الحركة
+[`library-index.md`](skills/ar-one-click-reel/library-index/library-index.md) يرتب كل ما في البلقن حسب الحاجة، وفيه جدول «معنى الكلمة ← حركة الورق». والوكيل `paper-motion-director` يخطّط حركة كل مشهد كلمة بكلمة منه («طويل» يتمدد معها شريط ورق)، وينوّع، وما لم يجد له مناسبًا يرجعه للأساسي ليقرر.
