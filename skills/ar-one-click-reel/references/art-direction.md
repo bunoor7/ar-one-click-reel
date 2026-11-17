@@ -39,7 +39,7 @@ Non-paper materials are interpreted through paper craftsmanship:
 
 ## Building people (the cartoon trap)
 
-Image generators drift toward a cartoon or soft 3D look the moment a face or a hand appears, even when the rest of the scene is convincing paper. People need their own rule, repeated in every prompt that contains them (the text is in `assets/styles.json` as `people_rule`):
+Image generators drift toward a cartoon or soft 3D look the moment a face or a hand appears, even when the rest of the scene is convincing paper. People need their own rule, repeated in every prompt that contains them (the default text is in `assets/styles.json` as `people_rule`; the origami, shadow theatre and quilling styles carry their own `people_rule` inside their entry, because flat cardstock faces do not fit them). The list below describes the default rule:
 
 - Faces and hands are built from a few flat cardstock shapes with hard scissor-cut edges and visible layer steps.
 - Features are simple cut-outs. No smooth shading, no rounded 3D volume, no glossy eyes, no cartoon grin, no clay, no toy or animated-film look.

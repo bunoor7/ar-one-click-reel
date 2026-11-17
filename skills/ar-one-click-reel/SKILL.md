@@ -44,7 +44,12 @@ Read each file when its stage is reached. Do not load them all up front.
 
 | File | Read it for |
 |---|---|
-| `references/intake.md` | The creative brief: the card flow that collects subject, format, duration, dialect, tone, visual style, colors, fonts and voice. Read first, at the start of every project. |
+| `references/preflight.md` | The setup check at the start of every project: what the machine and the connected tools must have, what installs by itself, what the owner is asked to add. Read first, before the first card. |
+| `references/intake.md` | The creative brief: the card flow that collects subject, format, production path, duration, dialect, tone, visual style, colors, fonts and voice. Read right after the setup check, at the start of every project. |
+| `references/formats.md` | The ten format cards (hook, build, rhythm, narration and ending, what to avoid), the pace of scenes per format, and the recommended length. Read at the format and duration cards and at Stages 4 and 5. |
+| `references/tones.md` | The ten tone cards (sentence, voice, picture, motion) and the pairing rules. Read at the tone card and at Stages 4 and 5. |
+| `references/production-paths.md` | The four production paths (paper, ready material, own footage, mixed), what changes per stage, and the self-contained rule. Read at the production path card. |
+| `references/confirmation-card.md` | The last card: a one-screen summary with scene count, tool readiness and a credits warning. Read at card 10. |
 | `references/other-models.md` | Using other AI models through a connected model gateway: what to send, the protocol (identical briefs, independent answers, read the disagreement), limits, and what stays unverified. Read when a gateway is connected or the creator asks for second opinions. |
 | `references/free-tools.md` | Using the free allowances of web image and video tools through the browser: rules, the free-tier log, and planning around limits. Read at Stage 7 when the creator chooses free web tools. |
 | `references/delegation.md` | Handing routine work to the eight helper agents (browser operator, web researcher, model consultant, reviewer, prompt writer, production runner, sound sourcer, motion director): what to delegate, what never, how to brief, how to run several at once. Read before delegating anything. |
@@ -68,7 +73,7 @@ Bundled assets (`assets/`):
 - `fonts/`: 18 open-licence Arabic fonts (SIL OFL, licences in `fonts/licenses/`), numbered in `fonts.json`.
 - `palettes.json`: 12 color themes, each with a title color checked for contrast against its background.
 - `styles.json`: 6 paper styles with their prompt text, and the rule for building people.
-- `font-board.png`, `palette-board.png`, `style-board.png`: the numbered boards shown to the creator (rebuilt by `scripts/make_boards.py`).
+- `font-board.png`, `palette-board.png`, `style-board.jpg`: the numbered boards shown to the creator (rebuilt by `scripts/make_boards.py`).
 
 Bundled scripts (run with `python3`, paths relative to this skill folder):
 
@@ -96,8 +101,8 @@ Follow the stages in this exact order. Complete one stage at a time, then stop a
 
 | # | Stage | Output |
 |---|---|---|
-| 0 | Model routing (section 4) | One-line plan of who does what |
-| 1-2 | Creative brief (cards, see `intake.md`) | Subject, format, duration, dialect, tone, visual style, colors, fonts, voice |
+| 0 | Setup check (`preflight.md`) and model routing (section 4) | Machine and tools ready; one-line plan of who does what |
+| 1-2 | Creative brief (cards, see `intake.md`) | Subject, format, production path, duration, dialect, tone, visual style, colors, fonts, voice |
 | 3 | Research and story concept | Verified factual foundation and concept sheet |
 | 4 | Complete Arabic script | Numbered voiceover script with timing |
 | 5 | Visual storyboard | Scene-by-scene storyboard |
@@ -135,4 +140,4 @@ Always prioritize, in this order:
 
 The final goal is not merely to create beautiful images. It is to produce a coherent, engaging, visually distinctive Arabic cinematic experience.
 
-Begin with Stage 0 (model routing), then the creative brief (`references/intake.md`) only.
+Begin with Stage 0 (the setup check in `references/preflight.md`, then model routing), then the creative brief (`references/intake.md`) only.

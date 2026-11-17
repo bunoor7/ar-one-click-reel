@@ -22,6 +22,30 @@ For Bahraini dialect (the same discipline applies to any requested dialect):
 - Follow user-approved spelling conventions.
 - Add selective Arabic vowel marks only when necessary for accurate pronunciation. Avoid unnecessary full diacritics.
 
+## The script is written in the chosen dialect
+
+The dialect picked on the dialect card decides the language of the script shown at Stage 4.
+
+- The script shown to the creator is the voiceover text itself, written in the chosen dialect. If he picked Bahraini, it is written in spoken Bahraini, the way it is pronounced, with his approved spelling, and it is the text he turns into voice. The same holds for Gulf white and for any other dialect he names.
+- Never show a Modern Standard Arabic script and leave the conversion to the creator.
+- Under the dialect card, show three sample sentences in the chosen dialect, so he approves the voice of the language before the full script is written.
+- Names and numbers are written the way they are spoken.
+- The recording sheet for «أرفعه بنفسي» is made from this same text, and it carries diacritics (التشكيل) that follow the chosen dialect. See the next section.
+- On-screen titles are always in Modern Standard Arabic, whatever the dialect of the narration. They are never rewritten in dialect. This keeps them readable across the Gulf and keeps the letter shaping accurate.
+- If the creator chose Modern Standard Arabic as the dialect, the script and the titles are both in it.
+
+## Diacritics on the recording sheet
+
+When the creator records the voice himself, the narration is handed over with diacritics, so he reads it the way the dialect is spoken.
+
+- **Bahraini and Gulf dialects.** The diacritics follow how the words are said in that dialect, not how Modern Standard Arabic would vocalize them. Dialect words and forms (for example the spoken question words and verb forms) are vocalized as spoken, and sounds that change in the dialect are marked so the reader does not slide back to the written standard. A Bahraini sheet respects Bahraini pronunciation first, then general Gulf usage.
+- **Modern Standard Arabic.** Full diacritics, including the case endings, with a sukun on the last word of each phrase so the reading stops naturally.
+- **Words whose pronunciation differs between communities or areas.** Do not guess. Mark them in the sheet, give the two or three readings, and let the creator choose. The choice is applied to every later occurrence of the word.
+- **Names, places and foreign terms.** Always vocalized, with a note when the usual pronunciation is not obvious.
+- **Numbers and dates.** Written out as they are spoken, then vocalized.
+- **Only the recording sheet is vocalized.** The approved script text, the on-screen titles and every image prompt stay as they are, and titles stay in Modern Standard Arabic without diacritics unless the creator asks for them.
+- **Check.** Proofread the diacritics word by word before handing the sheet over, and say plainly which words were flagged for his decision. He may correct any word, and his version wins.
+
 For all narration:
 
 - Write for the ear, not for the page. Sentences must be natural when spoken aloud.

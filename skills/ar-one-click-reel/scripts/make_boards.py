@@ -3,7 +3,7 @@
 
   font-board.png      every bundled font, drawn in its own letterforms, numbered
   palette-board.png   every color theme, numbered
-  style-board.png     every paper style, numbered (uses sample images when present)
+  style-board.jpg     every paper style, numbered (uses sample images when present)
 
 The boards are generated from assets/fonts.json, assets/palettes.json and
 assets/styles.json. Edit those files (or drop new fonts / sample images into
@@ -82,10 +82,14 @@ def fit(path, text, max_w, start, weight):
     return font(path, size, weight)
 
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from local_fonts import local_fonts  # noqa: E402
+
+
 def fonts_board(out, sample):
     data = load("fonts.json")
     sample = sample or data.get("sample", "رحلة الورق")
-    items = data["fonts"]
+    items = data["fonts"] + local_fonts()
     cols, cw, ch, gap, pad = 2, 860, 190, 22, 50
     rows = -(-len(items) // cols)
     W = pad * 2 + cols * cw + (cols - 1) * gap
@@ -98,7 +102,7 @@ def fonts_board(out, sample):
         x, y = pad + c * (cw + gap), top + r * (ch + gap)
         d.rounded_rectangle((x, y, x + cw, y + ch), 22, fill=CARD)
         badge(d, x + cw - 62, y + ch // 2, 40, it["id"])
-        path = os.path.join(ASSETS, "fonts", it["file"])
+        path = it.get("path") or os.path.join(ASSETS, "fonts", it["file"])
         f = fit(path, sample, cw - 190, 84, it.get("weight"))
         d.text((x + cw - 130, y + 78), sample, font=f, fill=INK, anchor="rm", **RTL)
         d.text((x + cw - 130, y + 152), f'{it["ar"]}  ·  {it["style"]}  ·  {it["best_for"]}',
@@ -165,7 +169,7 @@ def styles_board(out, sample):
     rows = -(-len(items) // cols)
     W = pad * 2 + cols * cw + (cols - 1) * gap
     img = Image.new("RGB", (W, 190 + rows * (ch + gap) + pad), BG)
-    top = header(img, "اختر الأسلوب البصري بالرقم", "كل الأساليب ورقية. بعد الاختيار يُولَّد مشهد تجريبي واحد للاعتماد قبل بقية المشاهد")
+    top = header(img, "اختر الأسلوب البصري بالرقم", "أساليب الورق. بعد الاختيار يُولَّد مشهد تجريبي واحد للاعتماد قبل بقية المشاهد")
     d = ImageDraw.Draw(img)
     missing = 0
     for i, s in enumerate(items):
@@ -194,8 +198,8 @@ def styles_board(out, sample):
         for li, line in enumerate(wrap(d, s["desc"], f, cw - 48)[:4]):
             d.text((x + cw - 24, y + ih + 96 + li * 36), line, font=f, fill=MUTED,
                    anchor="rm", **RTL)
-    path = os.path.join(out, "style-board.png")
-    img.save(path)
+    path = os.path.join(out, "style-board.jpg")
+    img.convert("RGB").save(path, "JPEG", quality=90, optimize=True)
     if missing:
         print(f"note: {missing} style(s) have no sample image yet "
               "(put them in assets/styles/ as named in styles.json).", file=sys.stderr)

@@ -1,6 +1,6 @@
 # Arabic fonts
 
-Eighteen open-licence fonts (SIL Open Font License, published on Google Fonts) are bundled in `assets/fonts/`, with their licence texts in `assets/fonts/licenses/`. They are numbered in `assets/fonts.json`, and `assets/font-board.png` shows every one in its real letterforms with its number.
+Twenty-three open-licence fonts (SIL Open Font License, published on Google Fonts) are bundled in `assets/fonts/`, with their licence texts in `assets/fonts/licenses/`. They are numbered in `assets/fonts.json`, and `assets/font-board.png` shows every one in its real letterforms with its number.
 
 The creator picks two numbers in the brief: a primary font for titles and a secondary font for dates, numbers and secondary text. Use one pair per project. Pass the number to `scripts/arabic_title.py --font N`.
 
@@ -26,6 +26,13 @@ Which font suits which genre:
 | Mystery, restrained | Markazi Text | `MarkaziText.ttf` | Dark, compact text Naskh |
 | Fiction, emotional | Lemonada | `Lemonada.ttf` | Soft cursive, warm |
 | General purpose | Tajawal Bold | `Tajawal-Bold.ttf` | Readable everywhere |
+| News, politics | Almarai Bold | `Almarai-Bold.ttf` | Clean modern headline sans |
+| Sports, strong titles | Kufam | `Kufam.ttf` | Wide Kufi with presence |
+| Headlines, suspense | Zain Black | `Zain-Black.ttf` | Heavy, decisive |
+| Very large headlines | Jomhuria | `Jomhuria-Regular.ttf` | Condensed display |
+| Children, education, light humour | Playpen Sans Arabic | `PlaypenSansArabic.ttf` | Friendly handwriting |
+
+Each font in `assets/fonts.json` carries `recommended_for` (the formats it suits best) and the file holds `suggested_pairs` (a main and a secondary font per format) for one-word approval. Every font stays selectable. Fonts the creator keeps on their own machine are read from `~/ar-one-click-reel-fonts` (or `AR_REEL_FONTS`) by `scripts/local_fonts.py`, numbered from 101, and are never copied into the plugin.
 
 Notes:
 
