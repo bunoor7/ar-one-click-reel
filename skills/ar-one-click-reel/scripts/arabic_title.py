@@ -97,6 +97,11 @@ def resolve_font(spec):
             fonts = {x["id"]: x for x in json.load(f)["fonts"]}
         it = fonts.get(int(spec))
         if not it:
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            from local_fonts import local_fonts
+            loc = {x["id"]: x for x in local_fonts()}
+            if int(spec) in loc:
+                return loc[int(spec)]["path"], None
             sys.exit(f"No bundled font number {spec}. Valid numbers: 1-{max(fonts)}.")
         return os.path.join(ASSETS, "fonts", it["file"]), it.get("weight")
     return spec, None

@@ -40,10 +40,15 @@ Read each file when its stage is reached. Do not load them all up front.
 
 | File | Read it for |
 |---|---|
-| `references/intake.md` | The creative brief: the card flow that collects subject, format, duration, dialect, tone, visual style, colors, fonts and voice. Read first, at the start of every project. |
+| `references/preflight.md` | The setup check at the start of every project: what the machine and the connected tools must have, what installs by itself, what the owner is asked to add. Read first, before the first card. |
+| `references/intake.md` | The creative brief: the card flow that collects subject, format, production path, duration, dialect, tone, visual style, colors, fonts and voice. Read right after the setup check, at the start of every project. |
+| `references/formats.md` | The ten format cards (hook, build, rhythm, narration and ending, what to avoid), the pace of scenes per format, and the recommended length. Read at the format and duration cards and at Stages 4 and 5. |
+| `references/tones.md` | The ten tone cards (sentence, voice, picture, motion) and the pairing rules. Read at the tone card and at Stages 4 and 5. |
+| `references/production-paths.md` | The four production paths (paper, ready material, own footage, mixed), what changes per stage, and the self-contained rule. Read at the production path card. |
+| `references/confirmation-card.md` | The last card: a one-screen summary with scene count, tool readiness and a credits warning. Read at card 10. |
 | `references/other-models.md` | Using other AI models through a connected model gateway: what to send, the protocol (identical briefs, independent answers, read the disagreement), limits, and what stays unverified. Read when a gateway is connected or the creator asks for second opinions. |
 | `references/free-tools.md` | Using the free allowances of web image and video tools through the browser: rules, the free-tier log, and planning around limits. Read at Stage 7 when the creator chooses free web tools. |
-| `references/delegation.md` | Handing routine work to the seven cheaper helper agents (browser operator, web researcher, model consultant, reviewer, prompt writer, production runner, sound sourcer): what to delegate, what never, how to brief, how to run several at once. Read before delegating anything. |
+| `references/delegation.md` | Handing routine work to the eight helper agents (browser operator, web researcher, model consultant, reviewer, prompt writer, production runner, sound sourcer, motion director): what to delegate, what never, how to brief, how to run several at once. Read before delegating anything. |
 | `references/content-and-integrity.md` | Narration language options, the content universe (categories A to L), editorial and factual integrity, special handling of Islamic subjects. Read at Stages 3 and 4. |
 | `references/storytelling.md` | Storytelling philosophy and the golden visual rule. Read at Stages 3 to 5. |
 | `references/art-direction.md` | Paper art direction, how people are built, paper-world immersion, Arabic typography and title legibility, composition, color and lighting, camera and format, creative originality. Read at Stages 5 to 8. |
@@ -51,7 +56,11 @@ Read each file when its stage is reached. Do not load them all up front.
 | `references/animation-and-sound.md` | Animation philosophy, timing and narration sync, sound design. Read at Stages 9 and 10. |
 | `references/stages.md` | The full specification of every production stage. Read the section for the current stage before executing it. |
 | `references/prompt-templates.md` | English templates: character sheet, scene image, text-free scene, universal animation prompt. Read at Stages 6, 7 and 9. |
+| `references/video-generator-tips.md` | When scenes are generated as video clips: one look image attached to every clip, recurring props with their own picture, clips that join into one shot, the newsprint diorama look, what generators refuse and the fix. Read at Stages 6, 7 and 9 with the prompt templates. |
+| `library-index/library-index.md` | The smart index: every resource of the plugin by need (scene motion, camera, code layers, transitions, titles and fonts, look, sound), a word-meaning → paper-motion table and the motion rules. Read before choosing any motion, transition or code layer, and give it to `paper-motion-director`. |
 | `references/code-animations.md` | Optional library of 47 code-built animation layers (counters, charts, maps, step flows, titles) added in the edit only for facts paper art cannot carry: where they fit, the rules, how to export. Read at Stage 10 when a shot needs one. |
+| `references/continuous-camera.md` | Optional one-shot assembly: the whole film as one continuous camera move through the paper world, no cuts or crossfades, each scene pinned to its narration line. Read at the intake if offered, at Stage 5 for the move table, and at Stage 10 to build. |
+| `references/antialgorithm.md` | Breaking the safe, average first pick for open creative choices (angle, hook, metaphor, title, composition, cover), with its seed, rough and check scripts. Read at Stages 4 and 5 and whenever the creator says the result looks generic. |
 | `references/tools.md` | Which tool to use for images, voice, video, sound effects, music, fonts and assembly, and how to use the bundled scripts. Read before any generation or assembly step. |
 | `references/arabic-fonts.md` | The bundled Arabic fonts, their numbers, and which genre each suits. Read at the font card and at Stage 8. |
 
@@ -60,7 +69,7 @@ Bundled assets (`assets/`):
 - `fonts/`: 18 open-licence Arabic fonts (SIL OFL, licences in `fonts/licenses/`), numbered in `fonts.json`.
 - `palettes.json`: 12 color themes, each with a title color checked for contrast against its background.
 - `styles.json`: 6 paper styles with their prompt text, and the rule for building people.
-- `font-board.png`, `palette-board.png`, `style-board.png`: the numbered boards shown to the creator (rebuilt by `scripts/make_boards.py`).
+- `font-board.png`, `palette-board.png`, `style-board.jpg`: the numbered boards shown to the creator (rebuilt by `scripts/make_boards.py`).
 
 Bundled scripts (run with `python3`, paths relative to this skill folder):
 
@@ -69,13 +78,27 @@ Bundled scripts (run with `python3`, paths relative to this skill folder):
 - `scripts/arabic_title.py`: renders an exact, correctly shaped Arabic title as a paper-cut layer, onto an image or as a transparent PNG. It picks a readable color for the background and refuses a title that would be hard to read. It is the post-production fallback whenever a generator cannot render the Arabic correctly.
 - `scripts/assemble.py`: assembles the approved clips, narration, sound effects and music into the final 9:16 video with ffmpeg, from a JSON manifest.
 
-## 4. Production workflow
+## 4. Stage 0: model routing (first step of every project)
+
+Before the creative brief and before loading any reference file, plan which model does which part of the work, so the main model's budget is not spent on routine work. This step comes before every other stage.
+
+1. **Split the project into its tasks** and tell the creator the plan in one Arabic line, for example: «البحث عند paper-web-researcher (Haiku)، البرومبتات عند paper-prompt-writer (Haiku)، التجميع عند paper-production-runner (Haiku)، والسكربت والقرار والتدقيق العربي عندي».
+2. **Route by task type** (agents and their models are in `agents/`, the rules in `references/delegation.md`):
+   - **Haiku**: mechanical work with no taste involved. Research gathering, filling prompt templates, timing, titles, assembly, file and duration checks, first-pass review, sound sourcing.
+   - **Sonnet**: `paper-browser-operator`, running finished prompts in the creator's web tools.
+   - **The main model**: judgment, approvals, the Arabic script and narration, storyboard decisions, the first prompt that sets the pattern, and every Arabic text check. Never hand these to a smaller model, because Arabic accuracy drops.
+3. **The main model cannot switch itself.** If the whole request is light (re-running assembly, a file conversion, a timing fix on an approved film), say in one Arabic line at the top of the reply that Sonnet or Haiku is enough for it and suggest opening a session on the cheaper model, then continue the work without waiting unless the creator says stop.
+4. **Never suggest Fable to save cost**: it is priced above Opus.
+5. **A tiny task** (one command, one file read) the main model does itself, because opening a helper also costs.
+
+## 5. Production workflow
 
 Follow the stages in this exact order. Complete one stage at a time, then stop and wait for the user's reply. Proceed only when the user explicitly approves the current stage or types «التالي». If the user requests revisions, revise the current stage without moving forward.
 
 | # | Stage | Output |
 |---|---|---|
-| 1-2 | Creative brief (cards, see `intake.md`) | Subject, format, duration, dialect, tone, visual style, colors, fonts, voice |
+| 0 | Setup check (`preflight.md`) and model routing (section 4) | Machine and tools ready; one-line plan of who does what |
+| 1-2 | Creative brief (cards, see `intake.md`) | Subject, format, production path, duration, dialect, tone, visual style, colors, fonts, voice |
 | 3 | Research and story concept | Verified factual foundation and concept sheet |
 | 4 | Complete Arabic script | Numbered voiceover script with timing |
 | 5 | Visual storyboard | Scene-by-scene storyboard |
@@ -88,7 +111,7 @@ Follow the stages in this exact order. Complete one stage at a time, then stop a
 
 Full instructions for each stage are in `references/stages.md`.
 
-## 5. Strict interaction rules
+## 6. Strict interaction rules
 
 - Always work one stage at a time. Do not output the entire production process at once. Never skip ahead or combine stages without explicit user permission.
 - When the user types «التالي», proceed to the next stage only.
@@ -113,7 +136,64 @@ Always prioritize, in this order:
 
 The final goal is not merely to create beautiful images. It is to produce a coherent, engaging, visually distinctive Arabic cinematic experience.
 
-Begin with the creative brief (`references/intake.md`) only.
+Begin with Stage 0 (the setup check in `references/preflight.md`, then model routing), then the creative brief (`references/intake.md`) only.
+
+
+---
+
+# Preflight: check what is missing before any work
+
+Run this once, at the start of every new project, before Stage 0. It takes seconds. When everything is present, say one Arabic line («كل المتطلبات جاهزة») and go on to Stage 0. Do not list what is fine.
+
+The plugin is meant for people who have none of the author's own tools. Never assume a tool, a connector, a library or a local folder is there. Check, then say what is missing.
+
+## Step 1: the machine
+
+Run the bundled check from the skill folder.
+
+```bash
+python3 -I scripts/preflight.py --fix            # on the creator's own computer
+python3 -I scripts/preflight.py --fix --sandbox  # in a disposable cloud workspace
+```
+
+- It checks Python 3.8+, Pillow, Arabic letter shaping (Raqm, or arabic-reshaper with python-bidi), ffmpeg and ffprobe, and the bundled fonts. Add `--with-animations` only when the creator wants the code-animation layers: it also checks Node and Playwright.
+- `--fix` installs missing Python packages at user level, without asking. This is safe.
+- ffmpeg and Node are system programs. Never install them silently. Show the command the script prints for this machine, say in Arabic what it installs, and wait for the owner's yes. After the yes, run `python3 -I scripts/preflight.py --fix-system`. The script never uses sudo on its own: when administrator rights are needed it prints the command for the owner to run.
+- A Python managed by the system (a refusal mentioning "externally-managed") needs a virtual environment. Say so and give the two commands. Do not force the install.
+- Run it again after fixing. Go on only when it prints Ready.
+
+## Step 2: the connected tools
+
+The script cannot see the session's connectors. Look at what is connected, then group it. A group needs at least one source. The sources for each group are in `tools.md`.
+
+| Group | Needed for | Level |
+|---|---|---|
+| Image generation | Stages 6 and 7, paper path and paper scenes of the mixed path | Required for those paths |
+| Research (web search and page reading) | Stage 3 | Recommended. Without it, mark every fact that still needs checking |
+| Voice | Stage 10, unless the creator records the voice himself | Required unless he records it |
+| Video generation | Stage 9, when scenes are animated by a generator | Optional. Without it, animate in the edit |
+| Sound effects and music | Stage 10 | Optional. Free libraries are listed in `tools.md` |
+| Browser | Free web tools (see `free-tools.md`) | Optional |
+
+If a group is missing, look for a connector that fits (the connector registry, when the session has one) and offer it. Never ask for a password, an API key or a token in the chat. When a tool needs one, give the owner the link where he enters it himself.
+
+## Step 3: tell the owner
+
+Only when something is missing, give the owner one short Arabic list, one line for each item, with what it is for and how to add it. Order it by what blocks the work first.
+
+> قبل ما نبدأ ينقصنا الآتي
+> 1. ffmpeg (ضروري، لتجميع الفيديو). أمر التثبيت لجهازك مكتوب تحت، وأحتاج موافقتك
+> 2. أداة توليد صور (ضرورية للمشاهد الورقية). أقترح توصيل إحدى هذه
+> 3. أداة صوت (اختيارية إذا سجّلت الصوت بنفسك)
+
+Then stop and wait for «تم». After it, run the check again and go on.
+
+## Rules
+
+- Items marked optional never block the work. Say once what the creator will not get without them, and go on.
+- Required items block the work until they are present. Do not start a stage that needs a missing required item.
+- A path that needs no image generator (ready material, own footage) does not ask for one.
+- Never say a tool is unavailable without having checked.
 
 
 ---
@@ -132,20 +212,25 @@ Before any research or writing, collect the creator's choices through a sequence
 - **No clickable cards available** (a plain chat, or this system used as a pasted prompt): ask the same questions one at a time as a short numbered list, wait for each answer, and never combine several questions in one message.
 - Everything the creator sees is in Arabic.
 
+## Before card 1: the setup check
+
+At the start of every new project, run the setup check in `preflight.md` (`scripts/preflight.py`), before the first card. Required items that are missing block the work until the creator has installed them. Optional items never block. Then start with card 1.
+
 ## The sequence
 
 | # | Card | Options |
 |---|---|---|
 | 1 | الموضوع | Only if not already given. Four example directions chosen to inspire, plus free text. The question: «ما الموضوع الذي تريد تحويله إلى فيديو سينمائي بتقنية الورق المقصوص؟» |
-| 2 | القالب | Four best fits for the subject from the ten formats in `stages.md` (documentary explainer, cinematic historical story, biographical portrait, sports documentary, political documentary, Islamic historical narrative, fictional short film, mystery or surprising-fact story, educational explainer, experimental). The rest by free text. |
-| 3 | المدة | 30 ثانية، دقيقة، دقيقتان، ثلاث دقائق. Free text for five minutes or a custom length. |
-| 4 | اللهجة | خليجي أبيض، عربي فصحى، بحريني، أخرى (free text). |
-| 5 | النبرة | The four best fits from: وثائقي جاد، درامي، ملهم، غامض، تعليمي، طريف، مفاجئ، عاطفي، أدبي درامي، مناسب للأطفال. |
-| 6 | الأسلوب البصري | Show `assets/style-board.png`. Options: the three styles that fit the subject (by number and name), then free text for another number. |
-| 7 | الألوان | Show `assets/palette-board.png`. Options: the three themes that fit the subject, then free text for another number or the creator's own colors. |
-| 8 | الخط الأساسي والفرعي | Show `assets/font-board.png`. Two cards: the primary font number (titles), then the secondary font number (dates, numbers, secondary text). Three recommended numbers each, then free text. |
+| 2 | الشكل | Four best fits for the subject from the ten format cards in `formats.md` (explainer, historical, biography, sports, political, Islamic, fiction, mystery, educational, experimental). Each option shows its hook and pace in one short line. The rest by free text. The format also decides the pace of the scenes. |
+| 2ب | طريقة الإنتاج | See `production-paths.md`: ورقي، مبني من مادة جاهزة، فيديو أصوره أنا، مختلط. Only the paper path has full stage text for now. If the creator picks another path, say plainly that it is not ready yet and offer the paper path. Cards 6 and 7 below are asked only for the paper path (and for the paper scenes of a mixed project). |
+| 3 | المدة | 30 ثانية، دقيقة، دقيقتان، ثلاث دقائق. Free text for five minutes or a custom length. Mark the length `formats.md` recommends for the chosen format «(موصى به)», and show the scene count the choice gives (13 scenes per minute is the reference for the explainer, scaled for the other formats; a scene is never under 3 seconds). |
+| 4 | اللهجة | خليجي أبيض، عربي فصحى، بحريني، أخرى (free text). Show three sample sentences in each dialect so the creator hears it. The script of Stage 4 is then written in that dialect, and on-screen titles stay in Modern Standard Arabic (see `content-and-integrity.md`). |
+| 5 | النبرة | The four best fits from the ten tones in `tones.md`. At most two tones, the first leads. Some pairings need the creator's confirmation before the script is written (listed in `tones.md`). |
+| 6 | الأسلوب البصري | Show `assets/style-board.jpg`. Options: the three styles that fit the subject (by number and name), then free text for another number. Styles marked `recommended_for` the chosen format in `assets/styles.json` get the mark «الأنسب لهذا الشكل»; every style stays selectable. The layered diorama has an optional frame variant (`image_framed`), off by default. |
+| 7 | الألوان | Show `assets/palette-board.png`. Options: the three themes that fit the subject, then free text for another number, the creator's own colors, or **«ارفع صورة»**: run `scripts/palette_from_image.py` on it, show the five colors and the title color, and adopt them only after the creator agrees. |
+| 8 | الخط الأساسي والفرعي | Show `assets/font-board.png`. Offer first the pair in `suggested_pairs` of `assets/fonts.json` for the chosen format, for approval in one word. Otherwise two cards: the primary font number (titles), then the secondary font number (dates, numbers, secondary text). Fonts marked `recommended_for` the format get the mark «الأنسب لهذا الشكل». |
 | 9 | الصوت (قبل الأخير) | See "The voice card" below. |
-| 10 | التأكيد (الأخير) | A summary of every choice, then two options: «ابدأ العمل» and «أعدّل اختيارًا». |
+| 10 | التأكيد (الأخير) | See `confirmation-card.md`: a one-screen summary with the scene count, the tools and their readiness, and a credits warning, then two options: «ابدأ العمل» and «أعدّل اختيارًا». |
 
 After «ابدأ العمل», go to Stage 3 (research and story concept). The old rule still holds from there: one stage at a time, and the creator approves each.
 
@@ -160,7 +245,7 @@ The boards are PNG files in `assets/`, built by `scripts/make_boards.py` from `a
 
 ### Fonts
 
-The primary font is used for titles. The secondary font is used for dates, numbers and secondary text. Both come from the bundled set in `assets/fonts/`. The creator may name any number from the board. Record the choices, and pass the numbers to `scripts/arabic_title.py --font N`.
+The primary font is used for titles. The secondary font is used for dates, numbers and secondary text. Both come from the bundled set in `assets/fonts/`, plus any fonts the creator keeps in their own folder (`scripts/local_fonts.py`, numbers from 101, never copied into the plugin). The creator may name any number from the board. Record the choices, and pass the numbers to `scripts/arabic_title.py --font N`.
 
 ### Colors
 
@@ -172,26 +257,295 @@ Ask in two steps.
 
 **Card 9a:** «هل ترفع الصوت بنفسك، أم أتولى أنا توليده؟»
 
-- **«أرفعه بنفسي»:** note it. When the script is approved at Stage 4, hand over the narration as a clean recording sheet: one numbered beat per block, with names flagged for pronunciation, numbers written out, and the pause marks. Later, at Stage 10, the creator's own files replace the generated voice in the assembly.
+- **«أرفعه بنفسي»:** note it. When the script is approved at Stage 4, hand over the narration as a clean recording sheet: one numbered beat per block, vocalized with diacritics that follow the chosen dialect (rules in `content-and-integrity.md`, section "Diacritics on the recording sheet"), with names flagged for pronunciation, numbers written out, and the pause marks. Later, at Stage 10, the creator's own files replace the generated voice in the assembly.
 - **«تولَّ أنت»:** go to card 9b.
 
-**Card 9b: whose voice.** The first option is always «عبدالمنعم إبراهيم» (the creator's own cloned Bahraini voice). The rest:
+**Card 9b: which voice.** Options:
 
-1. عبدالمنعم إبراهيم (الخيار الأول دائمًا)
-2. صوت رجل
-3. صوت امرأة
-4. صوت عشوائي من الأصوات العربية المتاحة
+1. صوت رجل
+2. صوت امرأة
+3. صوت عشوائي من الأصوات العربية المتاحة
 
-If the creator picks a man or a woman, ask **card 9c:** «عشوائي أم من اختيارك؟». Random: choose a fitting Arabic voice that matches the dialect and the tone, and say which one you picked. By choice: list three or four candidates with a short description and a preview link, and let the creator choose.
+Random: choose a fitting Arabic voice that matches the dialect and the tone, and say which one you picked. If the creator picks a man or a woman, ask **card 9c:** «عشوائي أم من اختيارك؟». By choice: list three or four candidates with a short description and a preview link, and let the creator choose.
 
-The voice with ID `EgfLdm4bhpTMYoRk8KIf` is a private cloned voice in the author's ElevenLabs workspace. It only exists in the author's account unless the author has published it. So:
-
-1. Look it up with the voice list of the speech tool, first by that ID, then by the name «عبدالمنعم إبراهيم».
-2. If it is found, offer it as option 1.
-3. If it is not found (the usual case for everyone else), keep the card's shape but tell the creator plainly that this voice is not available in their account, and offer the other options. Never present it as available, and never claim to have used it without a successful generation.
-4. Never generate speech with a voice the creator did not choose.
+Only voices the speech tool actually lists in the creator's own session are offered. Never name a specific person's voice, never use a voice that was cloned from someone else, and never claim to have used a voice without a successful generation. Never generate speech with a voice the creator did not choose.
 
 When generating, follow `tools.md`: generate a short sample of the first line with the chosen voice and let the creator approve before generating the whole narration.
+
+
+---
+
+# Format cards (القوالب)
+
+Read the card of the chosen format right after the brief is confirmed, before Stage 3, and again at Stages 4 and 5. The card sets the hook, the structure, the pace and the ending. It does not override the creator's tone, dialect or approved wording.
+
+Every card has the same five lines.
+
+- **الهوك**: the kind of opening that fits the format.
+- **البناء**: the narrative structure, taken from the list in `storytelling.md`.
+- **الإيقاع**: the typical scene length and the number of scenes per minute.
+- **السرد والخاتمة**: how the narrator speaks and how the film ends.
+- **يتجنب**: the usual mistakes of this format.
+
+The scene counts are a starting range, set from the creator's own choice of 13 scenes a minute for the explainer reference and scaled for the other formats. `scripts/timing.py` decides the real durations from the approved script.
+
+Two rules apply to every format. A scene never runs under 3 seconds, because its Arabic title needs about 2 seconds to read. The extra speed comes from movement inside the scene (a push in, parallax, an element entering) every 2 to 3 seconds, not from extra cuts.
+
+---
+
+## Durations and scene counts
+
+Scene counts are the format's pace multiplied by the length, rounded. The recommended length is the one the duration card puts first for that format. A film never goes below 5 scenes: a hook, three beats and an ending.
+
+| Format | 30 s | 60 s | 120 s | 180 s | Recommended |
+|---|---|---|---|---|---|
+| 1. وثائقي تفسيري | 7 | 13 | 26 | 39 | 60 to 90 s |
+| 2. قصة تاريخية سينمائية | 5 | 10 | 19 | 29 | 90 to 180 s |
+| 3. بورتريه سيرة | 5 | 10 | 21 | 32 | 90 to 180 s |
+| 4. وثائقي رياضي | 8 | 15 | 30 | 45 | 30 to 90 s |
+| 5. وثائقي سياسي | 5 | 10 | 21 | 32 | 90 to 180 s |
+| 6. سرد تاريخ إسلامي | 5 | 10 | 19 | 29 | 120 to 180 s |
+| 7. فيلم قصير خيالي | 5 | 9 | 18 | 27 | 60 to 120 s |
+| 8. قصة لغز أو معلومة مفاجئة | 6 | 12 | 25 | 38 | 30 to 60 s |
+| 9. تفسيري تعليمي | 5 | 10 | 21 | 32 | 60 to 120 s |
+| 10. تجريبي | free | free | free | free | free |
+
+The duration card shows the scene count next to each length for the chosen format. For a length not in the table, multiply the format's pace by the minutes.
+
+---
+
+## 1. وثائقي تفسيري
+
+- **الهوك**: a question the viewer thinks he knows the answer to, or a number that contradicts a common belief.
+- **البناء**: question and answer, or cause and effect.
+- **الإيقاع**: 4 to 5 seconds a scene, 12 to 14 scenes a minute (13 is the reference).
+- **السرد والخاتمة**: clear, steady, explains without lecturing. Ends with the answer stated in one sentence and one idea to keep.
+- **يتجنب**: a list of facts with no link between them, and more than one new concept in a scene.
+
+## 2. قصة تاريخية سينمائية
+
+- **الهوك**: the decisive moment first (the night before, the gate, the signal), then go back to how it began.
+- **البناء**: chronological with a turning point, or rise and fall.
+- **الإيقاع**: 5 to 7 seconds a scene, 9 to 10 scenes a minute, slower at the turning point.
+- **السرد والخاتمة**: narrative voice, past tense, sensory detail. Ends on the consequence that outlived the event.
+- **يتجنب**: invented dialogue attributed to real people, and dates stacked in one scene.
+
+## 3. بورتريه سيرة
+
+- **الهوك**: one act or one object that defines the person, shown before his name.
+- **البناء**: personal biography with one defining choice at the center.
+- **الإيقاع**: 5 to 6 seconds a scene, 10 to 11 scenes a minute.
+- **السرد والخاتمة**: close, respectful, specific. Ends on what the person left behind, not on praise.
+- **يتجنب**: a birth to death list, and adjectives in place of events.
+
+## 4. وثائقي رياضي
+
+- **الهوك**: the final minute of the match or the race, frozen, then rewind.
+- **البناء**: journey narrative or countdown.
+- **الإيقاع**: 3.5 to 4 seconds a scene, about 15 scenes a minute, a short scene at every peak.
+- **السرد والخاتمة**: energetic, short sentences, verified scores and times only. Ends on what the result changed.
+- **يتجنب**: unverified statistics, and dramatizing a result that was ordinary.
+
+## 5. وثائقي سياسي
+
+- **الهوك**: a contradiction between what was announced and what happened, with the date.
+- **البناء**: cause and effect, or before and after.
+- **الإيقاع**: 5 to 6 seconds a scene, 10 to 11 scenes a minute.
+- **السرد والخاتمة**: restrained and sourced. Claims are attributed to who made them. Ends with the open question or the verified outcome, never a verdict the sources do not carry.
+- **يتجنب**: opinion presented as fact, and adjectives that take a side.
+
+## 6. سرد تاريخ إسلامي
+
+- **الهوك**: the place and the moment, then the question that the story answers.
+- **البناء**: chronological, with the sources named inside the narration.
+- **الإيقاع**: 6 to 7 seconds a scene, 9 to 10 scenes a minute.
+- **السرد والخاتمة**: dignified language. Ends on the lasting effect. Follow the special handling rules in `content-and-integrity.md` for sacred figures and sacred scenes.
+- **يتجنب**: weak narrations stated as certain, and any depiction the integrity rules forbid.
+
+## 7. فيلم قصير خيالي
+
+- **الهوك**: a character in the middle of a problem, with no explanation yet.
+- **البناء**: emotional short story, or surprise ending.
+- **الإيقاع**: 5 to 8 seconds a scene, 8 to 10 scenes a minute, with silence allowed.
+- **السرد والخاتمة**: image first, narration second. Dialogue may be invented. Ends on an image that closes the feeling, not a moral.
+- **يتجنب**: explaining what the picture already shows, and a lesson added at the end.
+
+## 8. قصة لغز أو معلومة مفاجئة
+
+- **الهوك**: the strange fact stated plainly in the first sentence.
+- **البناء**: mystery and revelation.
+- **الإيقاع**: 4 to 5 seconds a scene, 12 to 13 scenes a minute, the reveal gets a longer scene.
+- **السرد والخاتمة**: calm, a little lower, clues in order. Ends with the explanation and one open detail.
+- **يتجنب**: promising a reveal the facts cannot deliver, and exaggerating the fact to sound stranger.
+
+## 9. تفسيري تعليمي
+
+- **الهوك**: a problem the learner meets in daily life.
+- **البناء**: problem and solution, or step by step.
+- **الإيقاع**: 5 to 6 seconds a scene, 10 to 11 scenes a minute, one idea per scene.
+- **السرد والخاتمة**: simple words, one example for every rule. Ends with a short recap of the steps.
+- **يتجنب**: terms with no definition, and more than one rule on screen.
+
+## 10. تجريبي
+
+- **الهوك**: an image with no explanation, held a second longer than comfortable.
+- **البناء**: visual metaphor narrative, circular, or nonlinear.
+- **الإيقاع**: free. Agree it with the creator in the storyboard before building.
+- **السرد والخاتمة**: sparse. Ends where the creator decides.
+- **يتجنب**: obscurity with no thread to follow, and effects that serve no beat.
+
+
+---
+
+# Tone cards (النبرات)
+
+Read the card of the chosen tone with the format card, before Stage 3, and again at Stages 4, 5 and 9. The tone changes how the film is delivered. It does not change the facts, the approved wording, the color theme or the fonts.
+
+Every card has the same four lines.
+
+- **الجملة**: sentence length and rhythm in the script.
+- **الصوت**: delivery speed, and the kind of music and sound effects.
+- **الصورة**: lighting, depth of shadow and contrast, inside the creator's chosen color theme. Never change the theme's colors.
+- **الحركة**: camera speed and the kind of transitions.
+
+---
+
+## 1. وثائقي جاد
+
+- **الجملة**: medium, plain, one fact to a sentence.
+- **الصوت**: steady, unhurried delivery. Sparse low music, real paper and room sounds, no stingers.
+- **الصورة**: even, soft light, moderate shadow, restrained contrast.
+- **الحركة**: slow push-ins and level pans, clean cuts, no playful transitions.
+
+## 2. درامي
+
+- **الجملة**: short sentences building to a long one at the peak.
+- **الصوت**: delivery rises with the conflict. Tense strings or percussion, a silence before the turning point.
+- **الصورة**: strong side light, deep shadow, high contrast.
+- **الحركة**: slow approach that tightens at the peak, hard cuts on the turning point.
+
+## 3. ملهم
+
+- **الجملة**: rising, open sentences with a clear step forward in each.
+- **الصوت**: warm, confident delivery. Building melodic music, light chimes on the wins.
+- **الصورة**: warm, high key light, low shadow, open depth with light behind the subject.
+- **الحركة**: upward and forward movement, smooth reveals, opening transitions.
+
+## 4. غامض
+
+- **الجملة**: short, with pauses, questions left open.
+- **الصوت**: low, slow delivery. A faint drone instead of melodic music, small distant sounds.
+- **الصورة**: low key side light, deep shadow, a hidden corner in the frame.
+- **الحركة**: very slow approach, partial reveals, dissolves between clues.
+
+## 5. تعليمي
+
+- **الجملة**: short and direct, one idea each, the key term repeated once.
+- **الصوت**: clear, even delivery with small stresses on the terms. Very light music, a soft tick on each step.
+- **الصورة**: bright, flat, readable light, minimal shadow, strong separation between layers.
+- **الحركة**: steady, predictable movement, a step-by-step reveal, clean cuts.
+
+## 6. طريف
+
+- **الجملة**: quick, with a setup and a short punch line.
+- **الصوت**: lively delivery with timing for the joke. Light playful music, small comic effects used sparingly.
+- **الصورة**: bright, cheerful light, light shadow, exaggerated proportions allowed.
+- **الحركة**: quick, bouncy movement, snappy cuts, a held beat before the punch line.
+
+## 7. مفاجئ
+
+- **الجملة**: calm sentences, then one short sentence that breaks the pattern.
+- **الصوت**: even delivery, a clean silence before the surprise, one sharp accent on it.
+- **الصورة**: ordinary light before the reveal, a sudden change in light or scale on it.
+- **الحركة**: steady, then a fast move or hard cut at the surprise.
+
+## 8. عاطفي
+
+- **الجملة**: simple, close, concrete, with room to breathe.
+- **الصوت**: soft, slightly slower delivery. Quiet piano or strings, real small sounds, silence allowed.
+- **الصورة**: warm low light, gentle shadow, soft edges, close framing.
+- **الحركة**: slow, patient, long holds on a face or an object, soft dissolves.
+
+## 9. أدبي درامي
+
+- **الجملة**: rich, rhythmic, with images and balance between clauses, still easy to speak.
+- **الصوت**: measured, theatrical delivery. Orchestral or oud-led music with room for the voice.
+- **الصورة**: painterly light, deep shadow, warm contrast, a strong foreground layer.
+- **الحركة**: slow and sweeping, long parallax, transitions that echo the imagery.
+
+## 10. مناسب للأطفال
+
+- **الجملة**: very short, concrete words, repetition, questions put to the child.
+- **الصوت**: bright, friendly, clear delivery. Gentle cheerful music, soft friendly effects, nothing sudden or loud.
+- **الصورة**: bright, soft light, almost no dark shadow, large simple shapes, friendly faces.
+- **الحركة**: gentle, predictable, simple transitions, nothing fast or frightening.
+
+---
+
+## Rules for every tone
+
+- The tone never bends a fact. A funny, dramatic or emotional tone does not exaggerate, invent a quotation or soften an uncertainty.
+- Lighting and contrast move inside the chosen color theme. If the tone asks for deep shadow and the theme is pale, darken the theme's own deep color. Do not bring in a new color.
+- Some pairings need the creator's confirmation before the script is written: «طريف» with a political or Islamic subject, «طريف» or «مفاجئ» with a subject about death or loss, and «مناسب للأطفال» with a subject about war or violence. Say what concerns you in one line and ask.
+- A creator can name two tones at most. Name which leads. The first sets the sentence and the sound, the second only colors the picture.
+
+
+---
+
+# Production paths (طريقة الإنتاج)
+
+The plugin is self-contained. It never calls another plugin's skills, whether or not the creator has them installed. Everything a path needs is bundled here, with its licence.
+
+A card named **طريقة الإنتاج** comes right before the visual style card. Its answer decides which stages run.
+
+| Option | Source of the pictures | Style card |
+|---|---|---|
+| ورقي | generated paper-cut scenes | shown, the six paper styles |
+| مبني من مادة جاهزة | photos and video clips the creator supplies or approves, with effects, titles and narration | skipped |
+| فيديو أصوره أنا | the creator's own footage, with touches added | skipped |
+| مختلط | each scene takes its own source: paper, clip, photo or code layer | shown, for the paper scenes only |
+
+## What changes by path
+
+| Stage | Paper | Ready material or own footage | Mixed |
+|---|---|---|---|
+| 3 and 4, research and script | same | same | same |
+| 5, storyboard | paper scene | scene with its source | every scene takes a source |
+| 6, 7 and 9, test frame, images, animation | as written | replaced by collecting the material, choosing the moments and adding effects | for paper scenes only |
+| 8, Arabic text check | same | same | same |
+| 10 and 11, assembly and final check | same | same | same |
+
+## Status
+
+This file records the decision and the shape only. The stage text for the three new paths, the scripts they need and the licence check of anything brought in from the creator's other work are still to be written. Do not route a project into a path that has no stage text yet. Say so, and offer the paper path.
+
+
+---
+
+# The confirmation card (card 10)
+
+The last card before any work starts. It is a summary, not a question about each choice again.
+
+## What it shows, in one screen
+
+1. Every choice, one line each: subject, format, duration, production path, dialect, tone, style, color theme, fonts (main and secondary), voice (own recording, or the generated voice type).
+2. Three lines that Claude works out, never guesses:
+   - **Scenes.** The expected number of scenes from the duration and the format's pace (see `formats.md`), and the number of images that will be generated.
+   - **Tools.** Which tools each stage will use, and whether each is ready according to the setup check at the start (see `preflight.md`). A missing optional tool is named with what the project does without it.
+   - **Cost.** A plain warning that generating images and voice may use credits in the creator's own accounts, before the creator agrees. No figure is invented. Quote a price only when the tool itself shows one.
+
+## The two options
+
+- «ابدأ العمل»
+- «أعدّل اختيارًا»
+
+If the creator edits, ask which card, show only that card again, then return to this summary. Nothing already chosen is asked twice.
+
+## Rules
+
+- Nothing is generated and no search or download starts before «ابدأ العمل».
+- Names in the summary are the creator's own choices, written as they chose them.
+- The summary never hides a conflict. If a choice clashes with another (for example a tone that needs confirmation with this subject, see `tones.md`), it is raised here before the creator starts.
 
 
 ---
@@ -219,6 +573,30 @@ For Bahraini dialect (the same discipline applies to any requested dialect):
 - Keep unfamiliar scientific or historical terms understandable.
 - Follow user-approved spelling conventions.
 - Add selective Arabic vowel marks only when necessary for accurate pronunciation. Avoid unnecessary full diacritics.
+
+## The script is written in the chosen dialect
+
+The dialect picked on the dialect card decides the language of the script shown at Stage 4.
+
+- The script shown to the creator is the voiceover text itself, written in the chosen dialect. If he picked Bahraini, it is written in spoken Bahraini, the way it is pronounced, with his approved spelling, and it is the text he turns into voice. The same holds for Gulf white and for any other dialect he names.
+- Never show a Modern Standard Arabic script and leave the conversion to the creator.
+- Under the dialect card, show three sample sentences in the chosen dialect, so he approves the voice of the language before the full script is written.
+- Names and numbers are written the way they are spoken.
+- The recording sheet for «أرفعه بنفسي» is made from this same text, and it carries diacritics (التشكيل) that follow the chosen dialect. See the next section.
+- On-screen titles are always in Modern Standard Arabic, whatever the dialect of the narration. They are never rewritten in dialect. This keeps them readable across the Gulf and keeps the letter shaping accurate.
+- If the creator chose Modern Standard Arabic as the dialect, the script and the titles are both in it.
+
+## Diacritics on the recording sheet
+
+When the creator records the voice himself, the narration is handed over with diacritics, so he reads it the way the dialect is spoken.
+
+- **Bahraini and Gulf dialects.** The diacritics follow how the words are said in that dialect, not how Modern Standard Arabic would vocalize them. Dialect words and forms (for example the spoken question words and verb forms) are vocalized as spoken, and sounds that change in the dialect are marked so the reader does not slide back to the written standard. A Bahraini sheet respects Bahraini pronunciation first, then general Gulf usage.
+- **Modern Standard Arabic.** Full diacritics, including the case endings, with a sukun on the last word of each phrase so the reading stops naturally.
+- **Words whose pronunciation differs between communities or areas.** Do not guess. Mark them in the sheet, give the two or three readings, and let the creator choose. The choice is applied to every later occurrence of the word.
+- **Names, places and foreign terms.** Always vocalized, with a note when the usual pronunciation is not obvious.
+- **Numbers and dates.** Written out as they are spoken, then vocalized.
+- **Only the recording sheet is vocalized.** The approved script text, the on-screen titles and every image prompt stay as they are, and titles stay in Modern Standard Arabic without diacritics unless the creator asks for them.
+- **Check.** Proofread the diacritics word by word before handing the sheet over, and say plainly which words were flagged for his decision. He may correct any word, and his version wins.
 
 For all narration:
 
@@ -487,7 +865,7 @@ Non-paper materials are interpreted through paper craftsmanship:
 
 ## Building people (the cartoon trap)
 
-Image generators drift toward a cartoon or soft 3D look the moment a face or a hand appears, even when the rest of the scene is convincing paper. People need their own rule, repeated in every prompt that contains them (the text is in `assets/styles.json` as `people_rule`):
+Image generators drift toward a cartoon or soft 3D look the moment a face or a hand appears, even when the rest of the scene is convincing paper. People need their own rule, repeated in every prompt that contains them (the default text is in `assets/styles.json` as `people_rule`; the origami, shadow theatre and quilling styles carry their own `people_rule` inside their entry, because flat cardstock faces do not fit them). The list below describes the default rule:
 
 - Faces and hands are built from a few flat cardstock shapes with hard scissor-cut edges and visible layer steps.
 - Features are simple cut-outs. No smooth shading, no rounded 3D volume, no glossy eyes, no cartoon grin, no clay, no toy or animated-film look.
@@ -900,7 +1278,7 @@ D. A brief note identifying any factual uncertainties that affect the script.
 
 Save the script as a text file with one numbered beat per line and run `scripts/timing.py` on it to produce B and C rather than estimating by eye.
 
-If the creator chose to record the voice themselves in the brief, also hand over the approved narration as a recording sheet: one numbered beat per block, pronunciation notes for names, numbers written out as they are spoken, and the pauses marked. Do this after the script is approved.
+If the creator chose to record the voice themselves in the brief, also hand over the approved narration as a recording sheet: one numbered beat per block, diacritics that follow the chosen dialect (see `content-and-integrity.md`, "Diacritics on the recording sheet"), pronunciation notes for names, numbers written out as they are spoken, and the pauses marked. Do this after the script is approved.
 
 Do not produce image prompts yet.
 
@@ -1197,7 +1575,7 @@ Paste the `prompt` text of the chosen style from `assets/styles.json` right afte
 
 ### 1c. People block (every scene with a person)
 
-Paste the `people_rule` from `assets/styles.json`:
+Paste the chosen style's own `people_rule` from `assets/styles.json` when that style has one (origami, shadow theatre and quilling do), and the default `people_rule` at the top of the file for the other styles. Never paste both:
 
 ```
 All people are flat-layered cut-paper figures: faces and hands are built from
@@ -1451,7 +1829,7 @@ What the step needs: natural Arabic delivery in the chosen register or dialect, 
 | A human recording | Still the best result for dialect. The script from Stage 4 is the recording sheet. |
 | Other TTS (OpenAI, Google, Azure) | Usable for Modern Standard Arabic. Dialects are weaker. |
 
-The voice is chosen in the brief (see `intake.md`, the voice card). The creator's own voice, «عبدالمنعم إبراهيم», is always the first option; it exists only in the author's ElevenLabs account unless published, so look it up before offering it and say plainly when it is not available.
+The voice is chosen in the brief (see `intake.md`, the voice card): the creator either uploads their own recording, or picks a man, a woman, or a random Arabic voice from the voices their speech tool lists.
 
 Practical guidance:
 
@@ -1549,7 +1927,7 @@ State plainly which step cannot be executed in this session, deliver everything 
 
 # Arabic fonts
 
-Eighteen open-licence fonts (SIL Open Font License, published on Google Fonts) are bundled in `assets/fonts/`, with their licence texts in `assets/fonts/licenses/`. They are numbered in `assets/fonts.json`, and `assets/font-board.png` shows every one in its real letterforms with its number.
+Twenty-three open-licence fonts (SIL Open Font License, published on Google Fonts) are bundled in `assets/fonts/`, with their licence texts in `assets/fonts/licenses/`. They are numbered in `assets/fonts.json`, and `assets/font-board.png` shows every one in its real letterforms with its number.
 
 The creator picks two numbers in the brief: a primary font for titles and a secondary font for dates, numbers and secondary text. Use one pair per project. Pass the number to `scripts/arabic_title.py --font N`.
 
@@ -1575,6 +1953,13 @@ Which font suits which genre:
 | Mystery, restrained | Markazi Text | `MarkaziText.ttf` | Dark, compact text Naskh |
 | Fiction, emotional | Lemonada | `Lemonada.ttf` | Soft cursive, warm |
 | General purpose | Tajawal Bold | `Tajawal-Bold.ttf` | Readable everywhere |
+| News, politics | Almarai Bold | `Almarai-Bold.ttf` | Clean modern headline sans |
+| Sports, strong titles | Kufam | `Kufam.ttf` | Wide Kufi with presence |
+| Headlines, suspense | Zain Black | `Zain-Black.ttf` | Heavy, decisive |
+| Very large headlines | Jomhuria | `Jomhuria-Regular.ttf` | Condensed display |
+| Children, education, light humour | Playpen Sans Arabic | `PlaypenSansArabic.ttf` | Friendly handwriting |
+
+Each font in `assets/fonts.json` carries `recommended_for` (the formats it suits best) and the file holds `suggested_pairs` (a main and a secondary font per format) for one-word approval. Every font stays selectable. Fonts the creator keeps on their own machine are read from `~/ar-one-click-reel-fonts` (or `AR_REEL_FONTS`) by `scripts/local_fonts.py`, numbered from 101, and are never copied into the plugin.
 
 Notes:
 
@@ -1591,7 +1976,7 @@ Notes:
 
 If your assistant cannot start helper agents, ignore the helper names below and do the same tasks yourself with the same checklists.
 
-The plugin ships seven helper agents (in the plugin's `agents/` folder). Each runs on a cheaper model than the main one. The main model plans, decides and approves. The helpers carry out routine, well-defined tasks and report back. You can start several at once.
+The plugin ships eight helper agents (in the plugin's `agents/` folder). Each runs on a cheaper model than the main one. The main model plans, decides and approves. The helpers carry out routine, well-defined tasks and report back. You can start several at once.
 
 **The principle: delegate execution, keep judgment.** A helper may run a script, fill a template, operate a website, or check a list. It may not decide what is true, what the creator approved, or whether a result is good enough.
 
@@ -1605,6 +1990,7 @@ The plugin ships seven helper agents (in the plugin's `agents/` folder). Each ru
 | `paper-reviewer` | Haiku | First-pass checking: Arabic titles against the approved wording, title contrast, images against the style and colors, timing, file lists, narration against the script. It cannot edit | Final approval, facts, anything it cannot open or measure |
 | `paper-prompt-writer` | Haiku | Filling the image-prompt templates for every scene of an approved storyboard | Designing scenes, changing Arabic wording |
 | `paper-production-runner` | Haiku | Running `timing.py`, `arabic_title.py`, `make_boards.py`, writing the manifest and running `assemble.py`, file and duration checks | Choosing fonts, colors, positions or durations, judging images |
+| `paper-motion-director` | Sonnet | Planning each scene's paper motion from the library index: which words get a motion beat, which paper action matches the meaning, transitions and the few code layers, varied across the film. Returns a timed plan and lists gaps | Writing final prompts, generating, rendering, deciding gaps |
 | `paper-sound-sourcer` | Haiku | Finding licensed paper sound effects and music, with a credits file | Mixing, final sound design, anything with an unclear licence |
 
 ## What stays with the main model

@@ -80,7 +80,7 @@ What the step needs: natural Arabic delivery in the chosen register or dialect, 
 | A human recording | Still the best result for dialect. The script from Stage 4 is the recording sheet. |
 | Other TTS (OpenAI, Google, Azure) | Usable for Modern Standard Arabic. Dialects are weaker. |
 
-The voice is chosen in the brief (see `intake.md`, the voice card). The creator's own voice, «عبدالمنعم إبراهيم», is always the first option; it exists only in the author's ElevenLabs account unless published, so look it up before offering it and say plainly when it is not available.
+The voice is chosen in the brief (see `intake.md`, the voice card): the creator either uploads their own recording, or picks a man, a woman, or a random Arabic voice from the voices their speech tool lists.
 
 Practical guidance:
 

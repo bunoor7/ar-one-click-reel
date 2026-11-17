@@ -8,7 +8,7 @@ OUT=MASTER-PROMPT.md
 {
   # SKILL.md without its YAML front matter
   awk 'BEGIN{n=0} /^---$/ && n<2 {n++; next} n>=2' "$S/SKILL.md"
-  for f in intake content-and-integrity storytelling art-direction characters \
+  for f in preflight intake formats tones production-paths confirmation-card content-and-integrity storytelling art-direction characters \
            animation-and-sound code-animations stages prompt-templates tools arabic-fonts delegation free-tools other-models; do
     printf '\n\n---\n\n'
     cat "$S/references/$f.md"

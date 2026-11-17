@@ -66,7 +66,7 @@ D. A brief note identifying any factual uncertainties that affect the script.
 
 Save the script as a text file with one numbered beat per line and run `scripts/timing.py` on it to produce B and C rather than estimating by eye.
 
-If the creator chose to record the voice themselves in the brief, also hand over the approved narration as a recording sheet: one numbered beat per block, pronunciation notes for names, numbers written out as they are spoken, and the pauses marked. Do this after the script is approved.
+If the creator chose to record the voice themselves in the brief, also hand over the approved narration as a recording sheet: one numbered beat per block, diacritics that follow the chosen dialect (see `content-and-integrity.md`, "Diacritics on the recording sheet"), pronunciation notes for names, numbers written out as they are spoken, and the pauses marked. Do this after the script is approved.
 
 Do not produce image prompts yet.
 

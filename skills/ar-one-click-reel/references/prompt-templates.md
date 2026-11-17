@@ -24,7 +24,7 @@ Paste the `prompt` text of the chosen style from `assets/styles.json` right afte
 
 ### 1c. People block (every scene with a person)
 
-Paste the `people_rule` from `assets/styles.json`:
+Paste the chosen style's own `people_rule` from `assets/styles.json` when that style has one (origami, shadow theatre and quilling do), and the default `people_rule` at the top of the file for the other styles. Never paste both:
 
 ```
 All people are flat-layered cut-paper figures: faces and hands are built from
